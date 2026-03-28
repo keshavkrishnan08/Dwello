@@ -40,78 +40,87 @@ struct HomeTabView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: HBSpacing.lg) {
-                        // Greeting — minimal
+                        // Greeting — no name, just time of day + home type
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(greeting)
                                     .font(.system(size: 14))
                                     .foregroundColor(.hbTextSecondary)
-                                Text(appStore.userName)
+                                Text("My Home")
                                     .font(.system(size: 24, weight: .bold, design: .rounded))
                                     .foregroundColor(.hbTextPrimary)
                             }
                             Spacer()
-                            ZStack {
-                                Circle()
-                                    .fill(Color.hbPrimary.opacity(0.08))
-                                    .frame(width: 40, height: 40)
-                                Text(String(appStore.userName.prefix(1)).uppercased())
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(.hbPrimary)
-                            }
                         }
                         .padding(.horizontal, HBSpacing.lg)
                         .padding(.top, HBSpacing.md)
                         .opacity(appeared ? 1 : 0)
 
-                        // Health score — animated card
+                        // Health score card with breakdown
                         VStack(spacing: HBSpacing.md) {
-                            ZStack {
-                                // Glow background
-                                Circle()
-                                    .fill(
-                                        RadialGradient(
-                                            colors: [Color.healthScoreColor(for: appStore.homeHealthScore).opacity(0.12), .clear],
-                                            center: .center,
-                                            startRadius: 10,
-                                            endRadius: 70
-                                        )
-                                    )
-                                    .frame(width: 140, height: 140)
-
-                                HBCircularProgress(
-                                    progress: Double(appStore.homeHealthScore) / 100.0,
-                                    lineWidth: 10,
-                                    size: 110,
-                                    color: Color.healthScoreColor(for: appStore.homeHealthScore)
-                                )
-                            }
-
-                            VStack(spacing: 4) {
-                                Text(healthLabel)
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .foregroundColor(.hbTextPrimary)
-                                Text(healthSubtitle)
-                                    .font(.system(size: 13))
-                                    .foregroundColor(.hbTextSecondary)
-                            }
-
-                            // Mini breakdown
                             HStack(spacing: HBSpacing.lg) {
-                                scorePill(icon: "bell.badge", value: "\(appStore.overdueReminders.count)", label: "Overdue", bad: !appStore.overdueReminders.isEmpty)
-                                scorePill(icon: "calendar.badge.checkmark", value: "\(appStore.monthlyTaskCount)", label: "This mo.", bad: false)
-                                scorePill(icon: "shield.checkered", value: "\(coveredCategories)/6", label: "Coverage", bad: coveredCategories < 3)
+                                ZStack {
+                                    Circle()
+                                        .fill(
+                                            RadialGradient(
+                                                colors: [Color.healthScoreColor(for: appStore.homeHealthScore).opacity(0.1), .clear],
+                                                center: .center,
+                                                startRadius: 8,
+                                                endRadius: 55
+                                            )
+                                        )
+                                        .frame(width: 110, height: 110)
+
+                                    HBCircularProgress(
+                                        progress: Double(appStore.homeHealthScore) / 100.0,
+                                        lineWidth: 8,
+                                        size: 90,
+                                        color: Color.healthScoreColor(for: appStore.homeHealthScore)
+                                    )
+                                }
+
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text("Home Health")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundColor(.hbTextSecondary)
+                                        .textCase(.uppercase)
+                                        .tracking(0.5)
+                                    Text(healthLabel)
+                                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                                        .foregroundColor(.hbTextPrimary)
+                                    Text(healthSubtitle)
+                                        .font(.system(size: 13))
+                                        .foregroundColor(.hbTextSecondary)
+                                        .lineLimit(2)
+                                }
+                                Spacer()
+                            }
+
+                            // Score breakdown — what's helping/hurting
+                            let breakdown = appStore.homeHealthBreakdown
+                            if !breakdown.isEmpty {
+                                VStack(spacing: 6) {
+                                    ForEach(breakdown.prefix(4)) { item in
+                                        HStack(spacing: HBSpacing.sm) {
+                                            Image(systemName: item.impact >= 0 ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
+                                                .font(.system(size: 13))
+                                                .foregroundColor(itemColor(item))
+                                            Text(item.label)
+                                                .font(.system(size: 13))
+                                                .foregroundColor(.hbTextSecondary)
+                                                .lineLimit(1)
+                                            Spacer()
+                                            Text(item.impact >= 0 ? "+\(item.impact)" : "\(item.impact)")
+                                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                                .foregroundColor(itemColor(item))
+                                        }
+                                    }
+                                }
+                                .padding(.top, 4)
                             }
                         }
                         .padding(HBSpacing.lg)
                         .frame(maxWidth: .infinity)
-                        .background(
-                            LinearGradient(
-                                colors: [Color.hbPrimary.opacity(0.03), Color.hbLavender.opacity(0.03)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
                         .background(Color.hbSurface)
                         .cornerRadius(HBRadii.card)
                         .hbShadow(.sm)
@@ -389,18 +398,11 @@ struct HomeTabView: View {
         }
     }
 
-    @ViewBuilder
-    private func scorePill(icon: String, value: String, label: String, bad: Bool) -> some View {
-        VStack(spacing: 3) {
-            Image(systemName: icon)
-                .font(.system(size: 14))
-                .foregroundColor(bad ? .hbDanger : .hbPrimary)
-            Text(value)
-                .font(.system(size: 15, weight: .bold, design: .rounded))
-                .foregroundColor(bad ? .hbDanger : .hbTextPrimary)
-            Text(label)
-                .font(.system(size: 10))
-                .foregroundColor(.hbTextSecondary)
+    private func itemColor(_ item: ScoreComponent) -> Color {
+        switch item.type {
+        case .positive: return .hbPrimary
+        case .negative: return .hbDanger
+        case .warning: return .hbAmber
         }
     }
 }

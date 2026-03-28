@@ -18,18 +18,14 @@ struct ProfileTabView: View {
                                 Circle()
                                     .fill(Color.hbPrimaryLight)
                                     .frame(width: 80, height: 80)
-                                Text(String(appStore.userName.prefix(1)).uppercased())
-                                    .font(.system(size: 32, weight: .bold))
+                                Image(systemName: "house.fill")
+                                    .font(.system(size: 32))
                                     .foregroundColor(.hbPrimary)
                             }
 
-                            Text(appStore.userName)
+                            Text(appStore.currentHome.type.rawValue)
                                 .font(HBTypography.h1)
                                 .foregroundColor(.hbTextPrimary)
-
-                            Text(appStore.user.email)
-                                .font(HBTypography.bodySmall)
-                                .foregroundColor(.hbTextSecondary)
 
                             // Subscription badge
                             HStack(spacing: HBSpacing.sm) {
