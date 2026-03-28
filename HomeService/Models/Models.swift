@@ -28,10 +28,10 @@ struct Home: Identifiable, Codable {
     var userId: UUID
     var name: String
     var type: HomeType
-    var yearBuilt: Int?
-    var sqft: Int?
-    var address: String?
-    var photoURL: String?
+    var yearBuilt: Int? = nil
+    var sqft: Int? = nil
+    var address: String? = nil
+    var photoURL: String? = nil
 
     enum HomeType: String, CaseIterable, Codable, Identifiable {
         case singleFamily = "Single-Family House"
@@ -71,13 +71,13 @@ struct LogEntry: Identifiable, Codable {
     var category: HomeCategory
     var title: String
     var date: Date
-    var cost: Double?
+    var cost: Double? = nil
     var priority: Priority
-    var recurringInterval: RecurringInterval?
-    var notes: String?
-    var contractorId: UUID?
-    var warrantyExpiry: Date?
-    var photoURLs: [String]
+    var recurringInterval: RecurringInterval? = nil
+    var notes: String? = nil
+    var contractorId: UUID? = nil
+    var warrantyExpiry: Date? = nil
+    var photoURLs: [String] = []
 
     static let sample = LogEntry(
         id: UUID(),
@@ -106,9 +106,9 @@ struct Contractor: Identifiable, Codable {
     let id: UUID
     var userId: UUID
     var name: String
-    var phone: String?
-    var email: String?
-    var specialty: HomeCategory?
+    var phone: String? = nil
+    var email: String? = nil
+    var specialty: HomeCategory? = nil
     var rating: Int // 1-5
 
     static let sample = Contractor(
@@ -133,11 +133,11 @@ struct Appliance: Identifiable, Codable {
     let id: UUID
     var homeId: UUID
     var name: String
-    var make: String?
-    var model: String?
-    var purchaseDate: Date?
-    var warrantyExpiry: Date?
-    var manualURL: String?
+    var make: String? = nil
+    var model: String? = nil
+    var purchaseDate: Date? = nil
+    var warrantyExpiry: Date? = nil
+    var manualURL: String? = nil
 
     static let sample = Appliance(
         id: UUID(),
@@ -156,9 +156,9 @@ struct Reminder: Identifiable, Codable {
     var homeId: UUID
     var title: String
     var dueDate: Date
-    var recurring: RecurringInterval?
+    var recurring: RecurringInterval? = nil
     var category: HomeCategory
-    var completedAt: Date?
+    var completedAt: Date? = nil
 
     var isOverdue: Bool { dueDate < Date() && completedAt == nil }
     var isCompleted: Bool { completedAt != nil }
@@ -176,7 +176,7 @@ struct Achievement: Identifiable, Codable {
     let id: UUID
     var userId: UUID
     var type: AchievementType
-    var unlockedAt: Date?
+    var unlockedAt: Date? = nil
 
     var isUnlocked: Bool { unlockedAt != nil }
 

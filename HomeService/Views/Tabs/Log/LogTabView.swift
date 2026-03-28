@@ -426,11 +426,14 @@ struct FollowUpReminderSheet: View {
 
                 Button(action: {
                     // Skip but still auto-schedule via scheduler
-                    appStore.scheduleFollowUp(for: LogEntry(
+                    let stub = LogEntry(
                         id: UUID(), homeId: appStore.currentHome.id,
                         category: category, title: title, date: Date(),
-                        priority: .routine, photoURLs: []
-                    ))
+                        cost: nil, priority: .routine,
+                        recurringInterval: nil, notes: nil,
+                        contractorId: nil, warrantyExpiry: nil, photoURLs: []
+                    )
+                    appStore.scheduleFollowUp(for: stub)
                     dismiss()
                 }) {
                     Text("Use recommended")

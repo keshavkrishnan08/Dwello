@@ -22,7 +22,7 @@ struct TimelineTabView: View {
 
     private func dayKey(_ date: Date) -> String {
         let c = calendar.dateComponents([.year, .month, .day], from: date)
-        return "\(c.year!)-\(c.month!)-\(c.day!)"
+        return "\(c.year ?? 0)-\(c.month ?? 0)-\(c.day ?? 0)"
     }
 
     private var daysWithLogs: Set<String> {
