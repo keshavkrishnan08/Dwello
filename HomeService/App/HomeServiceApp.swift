@@ -28,8 +28,29 @@ struct HomeServiceApp: App {
                 }
             }
             .task {
-                // Initial CloudKit sync
-                await CloudKitManager.shared.syncAll(appStore: appStore)
+                // Check iCloud and restore data if local is empty
+                await CloudKitManager.shared.checkStatus()
+
+                if appStore.logs.isEmpty {
+                    let cloud = await CloudKitManager.shared.pullAll()
+                    if !cloud.logs.isEmpty {
+                        await MainActor.run {
+                            appStore.restoreFromCloud(
+                                logs: cloud.logs,
+                                contractors: cloud.contractors,
+                                reminders: cloud.reminders,
+                                appliances: cloud.appliances
+                            )
+                        }
+                    }
+                } else {
+                    // Push local data to cloud
+                    await CloudKitManager.shared.syncAll(appStore: appStore)
+                }
+
+                // Load StoreKit products and check entitlements
+                await subscriptionManager.loadProducts()
+                await subscriptionManager.updatePurchasedProducts()
             }
         }
     }

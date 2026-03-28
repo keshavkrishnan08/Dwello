@@ -320,6 +320,15 @@ class AppStore {
         reminders.append(reminder)
     }
 
+    /// Restore all data from CloudKit (e.g., new device, reinstall)
+    func restoreFromCloud(logs: [LogEntry], contractors: [Contractor], reminders: [Reminder], appliances: [Appliance]) {
+        self.logs = logs
+        self.contractors = contractors
+        self.reminders = reminders
+        self.appliances = appliances
+        refreshAchievements()
+    }
+
     // MARK: - Custom Quick Logs
 
     struct QuickLogItem: Codable {
@@ -408,14 +417,8 @@ class AppStore {
             UserDefaults.standard.set(data, forKey: Self.appliancesKey)
         }
 
-        // Background CloudKit sync
-        Task.detached { [logs, contractors, reminders, appliances] in
-            let ck = CloudKitManager.shared
-            await ck.saveLogs(logs)
-            await ck.saveContractors(contractors)
-            await ck.saveReminders(reminders)
-            await ck.saveAppliances(appliances)
-        }
+        // Debounced CloudKit sync (waits 2s after last change)
+        CloudKitManager.shared.debouncedSync(appStore: self)
     }
 
     private func load() {

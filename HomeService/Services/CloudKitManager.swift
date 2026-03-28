@@ -8,189 +8,132 @@ class CloudKitManager {
     let container = CKContainer(identifier: "iCloud.dds.HomeService")
     var iCloudAvailable = false
     var syncStatus: SyncStatus = .idle
+    private var syncTask: Task<Void, Never>?
 
     enum SyncStatus: Equatable {
-        case idle
-        case syncing
-        case synced
-        case error(String)
+        case idle, syncing, synced, error(String)
     }
 
-    // Record type identifiers
-    private enum RecordType {
+    private enum RT {
         static let log = "LogEntry"
         static let contractor = "Contractor"
         static let reminder = "Reminder"
         static let appliance = "Appliance"
-        static let home = "Home"
     }
 
     init() {
-        checkiCloudStatus()
+        Task { await checkStatus() }
     }
 
-    // MARK: - iCloud Status
+    // MARK: - Status
 
-    func checkiCloudStatus() {
-        container.accountStatus { [weak self] status, error in
-            DispatchQueue.main.async {
-                self?.iCloudAvailable = (status == .available)
-                if let error = error {
-                    print("CloudKit status error: \(error.localizedDescription)")
-                }
-            }
-        }
-    }
-
-    // MARK: - Save Records
-
-    func saveLogs(_ logs: [LogEntry]) async {
-        guard iCloudAvailable else { return }
-        await MainActor.run { syncStatus = .syncing }
-
-        let database = container.privateCloudDatabase
-
+    @MainActor
+    func checkStatus() async {
         do {
-            for log in logs {
-                let record = logToRecord(log)
-                try await database.save(record)
-            }
-            await MainActor.run { syncStatus = .synced }
+            let status = try await container.accountStatus()
+            iCloudAvailable = (status == .available)
         } catch {
-            await MainActor.run { syncStatus = .error(error.localizedDescription) }
+            iCloudAvailable = false
+            print("CloudKit status: \(error.localizedDescription)")
         }
     }
 
-    func saveContractors(_ contractors: [Contractor]) async {
-        guard iCloudAvailable else { return }
+    // MARK: - Debounced Sync (prevents flooding)
 
-        let database = container.privateCloudDatabase
-        for contractor in contractors {
-            let record = contractorToRecord(contractor)
-            _ = try? await database.save(record)
+    func debouncedSync(appStore: AppStore) {
+        syncTask?.cancel()
+        syncTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled else { return }
+            await syncAll(appStore: appStore)
         }
     }
 
-    func saveReminders(_ reminders: [Reminder]) async {
-        guard iCloudAvailable else { return }
-
-        let database = container.privateCloudDatabase
-        for reminder in reminders {
-            let record = reminderToRecord(reminder)
-            _ = try? await database.save(record)
-        }
-    }
-
-    func saveAppliances(_ appliances: [Appliance]) async {
-        guard iCloudAvailable else { return }
-
-        let database = container.privateCloudDatabase
-        for appliance in appliances {
-            let record = applianceToRecord(appliance)
-            _ = try? await database.save(record)
-        }
-    }
-
-    // MARK: - Fetch Records
-
-    func fetchLogs() async -> [LogEntry] {
-        guard iCloudAvailable else { return [] }
-
-        let database = container.privateCloudDatabase
-        let query = CKQuery(recordType: RecordType.log, predicate: NSPredicate(value: true))
-        query.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
-
-        do {
-            let (results, _) = try await database.records(matching: query, resultsLimit: 500)
-            return results.compactMap { _, result in
-                guard case .success(let record) = result else { return nil }
-                return recordToLog(record)
-            }
-        } catch {
-            print("CloudKit fetch error: \(error)")
-            return []
-        }
-    }
-
-    func fetchContractors() async -> [Contractor] {
-        guard iCloudAvailable else { return [] }
-
-        let database = container.privateCloudDatabase
-        let query = CKQuery(recordType: RecordType.contractor, predicate: NSPredicate(value: true))
-
-        do {
-            let (results, _) = try await database.records(matching: query, resultsLimit: 100)
-            return results.compactMap { _, result in
-                guard case .success(let record) = result else { return nil }
-                return recordToContractor(record)
-            }
-        } catch { return [] }
-    }
-
-    func fetchReminders() async -> [Reminder] {
-        guard iCloudAvailable else { return [] }
-
-        let database = container.privateCloudDatabase
-        let query = CKQuery(recordType: RecordType.reminder, predicate: NSPredicate(value: true))
-
-        do {
-            let (results, _) = try await database.records(matching: query, resultsLimit: 200)
-            return results.compactMap { _, result in
-                guard case .success(let record) = result else { return nil }
-                return recordToReminder(record)
-            }
-        } catch { return [] }
-    }
-
-    func fetchAppliances() async -> [Appliance] {
-        guard iCloudAvailable else { return [] }
-
-        let database = container.privateCloudDatabase
-        let query = CKQuery(recordType: RecordType.appliance, predicate: NSPredicate(value: true))
-
-        do {
-            let (results, _) = try await database.records(matching: query, resultsLimit: 100)
-            return results.compactMap { _, result in
-                guard case .success(let record) = result else { return nil }
-                return recordToAppliance(record)
-            }
-        } catch { return [] }
-    }
-
-    // MARK: - Full Sync
+    // MARK: - Full Sync (push + pull)
 
     func syncAll(appStore: AppStore) async {
         guard iCloudAvailable else { return }
         await MainActor.run { syncStatus = .syncing }
 
-        // Push local → cloud
-        await saveLogs(appStore.logs)
-        await saveContractors(appStore.contractors)
-        await saveReminders(appStore.reminders)
-        await saveAppliances(appStore.appliances)
+        do {
+            // Push local → cloud (upsert)
+            try await batchSave(appStore.logs.map { logToRecord($0) })
+            try await batchSave(appStore.contractors.map { contractorToRecord($0) })
+            try await batchSave(appStore.reminders.map { reminderToRecord($0) })
+            try await batchSave(appStore.appliances.map { applianceToRecord($0) })
 
-        await MainActor.run { syncStatus = .synced }
+            await MainActor.run { syncStatus = .synced }
+        } catch {
+            await MainActor.run { syncStatus = .error(error.localizedDescription) }
+            print("CloudKit sync error: \(error)")
+        }
+    }
+
+    // MARK: - Pull from cloud (for restore / new device)
+
+    func pullAll() async -> (logs: [LogEntry], contractors: [Contractor], reminders: [Reminder], appliances: [Appliance]) {
+        guard iCloudAvailable else { return ([], [], [], []) }
+
+        async let l = fetchAll(RT.log, mapper: recordToLog)
+        async let c = fetchAll(RT.contractor, mapper: recordToContractor)
+        async let r = fetchAll(RT.reminder, mapper: recordToReminder)
+        async let a = fetchAll(RT.appliance, mapper: recordToAppliance)
+
+        return await (l, c, r, a)
+    }
+
+    // MARK: - Batch Save (upsert)
+
+    private func batchSave(_ records: [CKRecord]) async throws {
+        guard !records.isEmpty else { return }
+        let db = container.privateCloudDatabase
+
+        // CloudKit max 400 per operation
+        for chunk in records.chunked(into: 400) {
+            let (saveResults, _) = try await db.modifyRecords(saving: chunk, deleting: [], savePolicy: .changedKeys)
+            for (_, result) in saveResults {
+                if case .failure(let error) = result {
+                    print("CloudKit save error: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+
+    // MARK: - Generic Fetch
+
+    private func fetchAll<T>(_ recordType: String, mapper: @escaping (CKRecord) -> T?) async -> [T] {
+        let db = container.privateCloudDatabase
+        let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
+
+        do {
+            let (results, _) = try await db.records(matching: query, resultsLimit: 500)
+            return results.compactMap { _, result in
+                guard case .success(let record) = result else { return nil }
+                return mapper(record)
+            }
+        } catch {
+            print("CloudKit fetch \(recordType): \(error.localizedDescription)")
+            return []
+        }
     }
 
     // MARK: - Delete
 
-    func deleteRecord(id: UUID, type: String) async {
+    func deleteRecord(id: UUID) async {
         guard iCloudAvailable else { return }
-
-        let database = container.privateCloudDatabase
         let recordID = CKRecord.ID(recordName: id.uuidString)
-        _ = try? await database.deleteRecord(withID: recordID)
+        _ = try? await container.privateCloudDatabase.deleteRecord(withID: recordID)
     }
 
     // MARK: - Record Mapping: LogEntry
 
     private func logToRecord(_ log: LogEntry) -> CKRecord {
-        let record = CKRecord(recordType: RecordType.log, recordID: CKRecord.ID(recordName: log.id.uuidString))
+        let record = CKRecord(recordType: RT.log, recordID: CKRecord.ID(recordName: log.id.uuidString))
         record["homeId"] = log.homeId.uuidString
         record["category"] = log.category.rawValue
         record["title"] = log.title
         record["date"] = log.date
-        record["cost"] = log.cost as? CKRecordValue
+        if let cost = log.cost { record["cost"] = cost as NSNumber }
         record["priority"] = log.priority.rawValue
         record["recurringInterval"] = log.recurringInterval?.rawValue
         record["notes"] = log.notes
@@ -199,70 +142,57 @@ class CloudKitManager {
     }
 
     private func recordToLog(_ record: CKRecord) -> LogEntry? {
-        guard let idStr = record.recordID.recordName as String?,
-              let id = UUID(uuidString: idStr),
-              let homeIdStr = record["homeId"] as? String,
-              let homeId = UUID(uuidString: homeIdStr),
-              let categoryStr = record["category"] as? String,
-              let category = HomeCategory(rawValue: categoryStr),
+        guard let id = UUID(uuidString: record.recordID.recordName),
+              let homeIdStr = record["homeId"] as? String, let homeId = UUID(uuidString: homeIdStr),
+              let catStr = record["category"] as? String, let category = HomeCategory(rawValue: catStr),
               let title = record["title"] as? String,
               let date = record["date"] as? Date,
-              let priorityStr = record["priority"] as? String,
-              let priority = Priority(rawValue: priorityStr)
+              let priStr = record["priority"] as? String, let priority = Priority(rawValue: priStr)
         else { return nil }
 
-        let cost = record["cost"] as? Double
-        let recurringStr = record["recurringInterval"] as? String
-        let recurring = recurringStr.flatMap { RecurringInterval(rawValue: $0) }
-        let notes = record["notes"] as? String
-        let contractorIdStr = record["contractorId"] as? String
-        let contractorId = contractorIdStr.flatMap { UUID(uuidString: $0) }
-
         return LogEntry(
-            id: id, homeId: homeId, category: category, title: title,
-            date: date, cost: cost, priority: priority,
-            recurringInterval: recurring, notes: notes,
-            contractorId: contractorId, photoURLs: []
+            id: id, homeId: homeId, category: category, title: title, date: date,
+            cost: (record["cost"] as? NSNumber)?.doubleValue,
+            priority: priority,
+            recurringInterval: (record["recurringInterval"] as? String).flatMap { RecurringInterval(rawValue: $0) },
+            notes: record["notes"] as? String,
+            contractorId: (record["contractorId"] as? String).flatMap { UUID(uuidString: $0) }
         )
     }
 
     // MARK: - Record Mapping: Contractor
 
     private func contractorToRecord(_ c: Contractor) -> CKRecord {
-        let record = CKRecord(recordType: RecordType.contractor, recordID: CKRecord.ID(recordName: c.id.uuidString))
+        let record = CKRecord(recordType: RT.contractor, recordID: CKRecord.ID(recordName: c.id.uuidString))
         record["userId"] = c.userId.uuidString
         record["name"] = c.name
         record["phone"] = c.phone
         record["email"] = c.email
         record["specialty"] = c.specialty?.rawValue
-        record["rating"] = c.rating
+        record["rating"] = c.rating as NSNumber
         return record
     }
 
     private func recordToContractor(_ record: CKRecord) -> Contractor? {
-        guard let idStr = record.recordID.recordName as String?,
-              let id = UUID(uuidString: idStr),
-              let userIdStr = record["userId"] as? String,
-              let userId = UUID(uuidString: userIdStr),
+        guard let id = UUID(uuidString: record.recordID.recordName),
+              let userIdStr = record["userId"] as? String, let userId = UUID(uuidString: userIdStr),
               let name = record["name"] as? String,
-              let rating = record["rating"] as? Int
+              let rating = (record["rating"] as? NSNumber)?.intValue
         else { return nil }
-
-        let specialtyStr = record["specialty"] as? String
-        let specialty = specialtyStr.flatMap { HomeCategory(rawValue: $0) }
 
         return Contractor(
             id: id, userId: userId, name: name,
             phone: record["phone"] as? String,
             email: record["email"] as? String,
-            specialty: specialty, rating: rating
+            specialty: (record["specialty"] as? String).flatMap { HomeCategory(rawValue: $0) },
+            rating: rating
         )
     }
 
     // MARK: - Record Mapping: Reminder
 
     private func reminderToRecord(_ r: Reminder) -> CKRecord {
-        let record = CKRecord(recordType: RecordType.reminder, recordID: CKRecord.ID(recordName: r.id.uuidString))
+        let record = CKRecord(recordType: RT.reminder, recordID: CKRecord.ID(recordName: r.id.uuidString))
         record["homeId"] = r.homeId.uuidString
         record["title"] = r.title
         record["dueDate"] = r.dueDate
@@ -273,22 +203,17 @@ class CloudKitManager {
     }
 
     private func recordToReminder(_ record: CKRecord) -> Reminder? {
-        guard let idStr = record.recordID.recordName as String?,
-              let id = UUID(uuidString: idStr),
-              let homeIdStr = record["homeId"] as? String,
-              let homeId = UUID(uuidString: homeIdStr),
+        guard let id = UUID(uuidString: record.recordID.recordName),
+              let homeIdStr = record["homeId"] as? String, let homeId = UUID(uuidString: homeIdStr),
               let title = record["title"] as? String,
               let dueDate = record["dueDate"] as? Date,
-              let categoryStr = record["category"] as? String,
-              let category = HomeCategory(rawValue: categoryStr)
+              let catStr = record["category"] as? String, let category = HomeCategory(rawValue: catStr)
         else { return nil }
-
-        let recurringStr = record["recurring"] as? String
-        let recurring = recurringStr.flatMap { RecurringInterval(rawValue: $0) }
 
         return Reminder(
             id: id, homeId: homeId, title: title, dueDate: dueDate,
-            recurring: recurring, category: category,
+            recurring: (record["recurring"] as? String).flatMap { RecurringInterval(rawValue: $0) },
+            category: category,
             completedAt: record["completedAt"] as? Date
         )
     }
@@ -296,7 +221,7 @@ class CloudKitManager {
     // MARK: - Record Mapping: Appliance
 
     private func applianceToRecord(_ a: Appliance) -> CKRecord {
-        let record = CKRecord(recordType: RecordType.appliance, recordID: CKRecord.ID(recordName: a.id.uuidString))
+        let record = CKRecord(recordType: RT.appliance, recordID: CKRecord.ID(recordName: a.id.uuidString))
         record["homeId"] = a.homeId.uuidString
         record["name"] = a.name
         record["make"] = a.make
@@ -308,10 +233,8 @@ class CloudKitManager {
     }
 
     private func recordToAppliance(_ record: CKRecord) -> Appliance? {
-        guard let idStr = record.recordID.recordName as String?,
-              let id = UUID(uuidString: idStr),
-              let homeIdStr = record["homeId"] as? String,
-              let homeId = UUID(uuidString: homeIdStr),
+        guard let id = UUID(uuidString: record.recordID.recordName),
+              let homeIdStr = record["homeId"] as? String, let homeId = UUID(uuidString: homeIdStr),
               let name = record["name"] as? String
         else { return nil }
 
@@ -323,5 +246,14 @@ class CloudKitManager {
             warrantyExpiry: record["warrantyExpiry"] as? Date,
             manualURL: record["manualURL"] as? String
         )
+    }
+}
+
+// MARK: - Array chunking helper
+private extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        stride(from: 0, to: count, by: size).map {
+            Array(self[$0..<Swift.min($0 + size, count)])
+        }
     }
 }
