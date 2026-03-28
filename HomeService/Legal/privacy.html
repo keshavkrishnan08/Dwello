@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeBase — Privacy Policy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #FFFAF5;
+            color: #1a1a2e;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0d9488 0%, #14B8A6 50%, #2dd4bf 100%);
+            padding: 48px 24px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%);
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10%, 10%); }
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 8px;
+            font-weight: 400;
+            position: relative;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+        }
+
+        .last-updated {
+            display: inline-block;
+            background: rgba(20, 184, 166, 0.1);
+            color: #0d9488;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 28px;
+        }
+
+        .intro {
+            font-size: 16px;
+            color: #4a4a5a;
+            margin-bottom: 36px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid rgba(20, 184, 166, 0.15);
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-top: 36px;
+            margin-bottom: 14px;
+            padding-left: 14px;
+            border-left: 3px solid #14B8A6;
+        }
+
+        h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: #2d2d42;
+            margin-top: 22px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 15px;
+            color: #4a4a5a;
+            margin-bottom: 14px;
+        }
+
+        ul, ol {
+            margin: 12px 0 16px 20px;
+            color: #4a4a5a;
+            font-size: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.06) 0%, rgba(20, 184, 166, 0.03) 100%);
+            border: 1px solid rgba(20, 184, 166, 0.18);
+            border-radius: 12px;
+            padding: 20px 22px;
+            margin: 18px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            background: #ffffff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .data-table th {
+            background: rgba(20, 184, 166, 0.08);
+            color: #0d9488;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            padding: 14px 18px;
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 13px 18px;
+            font-size: 14px;
+            color: #4a4a5a;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .data-table tr:hover td {
+            background: rgba(20, 184, 166, 0.02);
+        }
+
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-local {
+            background: rgba(20, 184, 166, 0.12);
+            color: #0d9488;
+        }
+
+        .badge-cloud {
+            background: rgba(99, 102, 241, 0.12);
+            color: #6366f1;
+        }
+
+        strong {
+            color: #2d2d42;
+            font-weight: 600;
+        }
+
+        a {
+            color: #14B8A6;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(20, 184, 166, 0.3);
+            transition: border-color 0.2s;
+        }
+
+        a:hover {
+            border-bottom-color: #14B8A6;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 28px 20px 40px;
+            border-top: 1px solid rgba(20, 184, 166, 0.12);
+            margin-top: 40px;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: #8a8a9a;
+        }
+
+        .footer a {
+            font-size: 13px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: none;
+            color: #14B8A6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Privacy Policy</h1>
+        <p class="subtitle">HomeBase — Home Maintenance Tracker</p>
+    </div>
+
+    <div class="container">
+        <span class="last-updated">Last Updated: March 28, 2026</span>
+
+        <p class="intro">
+            Your privacy is fundamental to how we build HomeBase. This policy explains what data we collect, how we store it, and the rights you have over your information. The short version: your data is yours, we don't sell it, and we collect only what's needed to make the app work.
+        </p>
+
+        <h2>1. Information We Collect</h2>
+        <p>
+            HomeBase collects information you provide directly when using the app. We don't collect data silently in the background or harvest information beyond what you enter.
+        </p>
+
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Data Type</th>
+                    <th>Examples</th>
+                    <th>Storage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Home Information</strong></td>
+                    <td>Home name, address, property type, year built</td>
+                    <td><span class="badge badge-cloud">iCloud</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Maintenance Logs</strong></td>
+                    <td>Task descriptions, dates, notes, completion status</td>
+                    <td><span class="badge badge-cloud">iCloud</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Photos</strong></td>
+                    <td>Maintenance photos, receipts, appliance labels</td>
+                    <td><span class="badge badge-cloud">iCloud</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Contractor Details</strong></td>
+                    <td>Names, phone numbers, email addresses, specialties, notes</td>
+                    <td><span class="badge badge-cloud">iCloud</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Appliance Data</strong></td>
+                    <td>Brand, model, serial number, purchase date, warranty info</td>
+                    <td><span class="badge badge-cloud">iCloud</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Reminders</strong></td>
+                    <td>Scheduled maintenance dates, recurring task settings</td>
+                    <td><span class="badge badge-cloud">iCloud</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Subscription Status</strong></td>
+                    <td>Plan type, subscription state</td>
+                    <td><span class="badge badge-local">Device</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>2. How We Store Your Data</h2>
+        <div class="highlight-box">
+            <p><strong>CloudKit &amp; iCloud:</strong> All your home maintenance data is stored in Apple's CloudKit infrastructure, tied to your personal iCloud account. This means your data is encrypted in transit and at rest using Apple's security standards. We don't maintain separate servers or databases containing your personal data.</p>
+            <p><strong>On-Device:</strong> Subscription status and app preferences are stored locally on your device.</p>
+        </div>
+        <p>
+            Because we use CloudKit's private database, only you can access your data through your iCloud account. We cannot read, access, or view your personal maintenance records, photos, or contractor information.
+        </p>
+
+        <h2>3. How We Use Your Data</h2>
+        <p>We use your information solely to:</p>
+        <ul>
+            <li>Provide and operate the HomeBase app experience</li>
+            <li>Sync your data across your Apple devices via iCloud</li>
+            <li>Send you scheduled maintenance reminders you've configured</li>
+            <li>Process and manage your subscription through Apple's StoreKit</li>
+            <li>Improve app performance and fix bugs</li>
+        </ul>
+
+        <h2>4. What We Don't Do</h2>
+        <div class="highlight-box">
+            <p><strong>We do NOT sell your data.</strong> Not to advertisers, data brokers, or anyone else. Period.</p>
+            <p><strong>We do NOT share your personal data with third parties</strong> for marketing or advertising purposes.</p>
+            <p><strong>We do NOT track you across other apps or websites.</strong></p>
+            <p><strong>We do NOT create advertising profiles</strong> based on your home maintenance activity.</p>
+        </div>
+
+        <h2>5. Third-Party Services</h2>
+        <p>HomeBase integrates with the following Apple services:</p>
+        <ul>
+            <li><strong>Apple CloudKit / iCloud:</strong> For secure data storage and cross-device sync. Governed by <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener">Apple's Privacy Policy</a>.</li>
+            <li><strong>Apple StoreKit:</strong> For processing subscription payments. Payment information is handled entirely by Apple and is never shared with us.</li>
+        </ul>
+
+        <h3>Analytics</h3>
+        <p>
+            We may collect anonymous, aggregated analytics data (such as crash reports and general usage patterns) to improve app stability and performance. This data contains no personally identifiable information and cannot be linked back to you. If Apple Analytics is used, it is governed by Apple's privacy practices and you can opt out through your device settings.
+        </p>
+
+        <h2>6. Data Retention &amp; Deletion</h2>
+        <p>
+            Your data remains in your iCloud account for as long as you use the App. We don't impose arbitrary retention periods on your content.
+        </p>
+        <p><strong>To delete your data, you can:</strong></p>
+        <ul>
+            <li>Delete individual records, logs, photos, or contacts directly within the App</li>
+            <li>Delete all App data through the App's settings</li>
+            <li>Contact us at <a href="mailto:keshav-krishnan@outlook.com">keshav-krishnan@outlook.com</a> to request complete data deletion</li>
+            <li>Remove the App and its associated iCloud data through your Apple ID settings</li>
+        </ul>
+        <p>
+            Upon receiving a deletion request, we'll process it within 30 days. Some data may persist in iCloud backups according to Apple's retention policies.
+        </p>
+
+        <h2>7. Your Rights Under GDPR</h2>
+        <p>If you're located in the European Economic Area (EEA), you have the following rights:</p>
+        <ul>
+            <li><strong>Right of Access:</strong> Request a copy of the personal data we hold about you</li>
+            <li><strong>Right to Rectification:</strong> Correct any inaccurate or incomplete data</li>
+            <li><strong>Right to Erasure:</strong> Request deletion of your personal data ("right to be forgotten")</li>
+            <li><strong>Right to Data Portability:</strong> Receive your data in a structured, commonly used format</li>
+            <li><strong>Right to Restrict Processing:</strong> Limit how we process your data in certain circumstances</li>
+            <li><strong>Right to Object:</strong> Object to the processing of your personal data</li>
+        </ul>
+        <p>
+            To exercise any of these rights, contact us at <a href="mailto:keshav-krishnan@outlook.com">keshav-krishnan@outlook.com</a>. We'll respond within 30 days.
+        </p>
+
+        <h2>8. Your Rights Under CCPA</h2>
+        <p>If you're a California resident, the California Consumer Privacy Act grants you additional rights:</p>
+        <ul>
+            <li><strong>Right to Know:</strong> You can request what personal information we've collected, the sources, the business purpose, and the categories of third parties we've shared it with</li>
+            <li><strong>Right to Delete:</strong> You can request deletion of your personal information</li>
+            <li><strong>Right to Opt-Out:</strong> You have the right to opt out of the sale of personal information. Since we don't sell your data, this right is automatically honored</li>
+            <li><strong>Right to Non-Discrimination:</strong> We won't discriminate against you for exercising your CCPA rights</li>
+        </ul>
+        <p>
+            To make a CCPA request, email us at <a href="mailto:keshav-krishnan@outlook.com">keshav-krishnan@outlook.com</a> with "CCPA Request" in the subject line.
+        </p>
+
+        <h2>9. Children's Privacy</h2>
+        <div class="highlight-box">
+            <p>
+                HomeBase is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If you believe a child under 13 has provided us with personal data, please contact us immediately at <a href="mailto:keshav-krishnan@outlook.com">keshav-krishnan@outlook.com</a> and we'll promptly delete that information.
+            </p>
+        </div>
+
+        <h2>10. Security</h2>
+        <p>
+            We take data security seriously. By leveraging Apple's CloudKit infrastructure, your data benefits from Apple's enterprise-grade encryption both in transit and at rest. However, no method of electronic storage is 100% secure. While we strive to protect your information, we cannot guarantee absolute security.
+        </p>
+
+        <h2>11. International Data Transfers</h2>
+        <p>
+            Your data is stored via Apple's iCloud infrastructure and may be processed in data centers located outside your country of residence. Apple maintains appropriate safeguards for international data transfers in compliance with applicable data protection laws.
+        </p>
+
+        <h2>12. Changes to This Policy</h2>
+        <p>
+            We may update this Privacy Policy periodically. When we make significant changes, we'll update the "Last Updated" date and notify you through the App. We encourage you to review this page regularly.
+        </p>
+
+        <h2>13. Contact Us</h2>
+        <p>
+            Have questions, concerns, or a data request? Get in touch:
+        </p>
+        <p>
+            <strong>Email:</strong> <a href="mailto:keshav-krishnan@outlook.com">keshav-krishnan@outlook.com</a>
+        </p>
+
+        <div class="footer">
+            <div class="nav-links">
+                <a href="terms.html">Terms of Service</a>
+                <a href="support.html">Support</a>
+            </div>
+            <p>&copy; 2026 HomeBase. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

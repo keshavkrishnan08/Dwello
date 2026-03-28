@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeBase — Support</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #FFFAF5;
+            color: #1a1a2e;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0d9488 0%, #14B8A6 50%, #2dd4bf 100%);
+            padding: 48px 24px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%);
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10%, 10%); }
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 8px;
+            font-weight: 400;
+            position: relative;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+        }
+
+        .contact-banner {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 24px 26px;
+            margin-bottom: 36px;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            text-align: center;
+        }
+
+        .contact-banner .icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #14B8A6, #0d9488);
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+
+        .contact-banner .icon svg {
+            width: 24px;
+            height: 24px;
+            fill: #ffffff;
+        }
+
+        .contact-banner h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+            border: none;
+            padding: 0;
+        }
+
+        .contact-banner p {
+            font-size: 15px;
+            color: #6a6a7a;
+            margin-bottom: 14px;
+        }
+
+        .contact-banner a.email-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #14B8A6, #0d9488);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 10px;
+            text-decoration: none;
+            border: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .contact-banner a.email-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(20, 184, 166, 0.35);
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-top: 36px;
+            margin-bottom: 14px;
+            padding-left: 14px;
+            border-left: 3px solid #14B8A6;
+        }
+
+        h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: #2d2d42;
+            margin-top: 22px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 15px;
+            color: #4a4a5a;
+            margin-bottom: 14px;
+        }
+
+        ul, ol {
+            margin: 12px 0 16px 20px;
+            color: #4a4a5a;
+            font-size: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        strong {
+            color: #2d2d42;
+            font-weight: 600;
+        }
+
+        a {
+            color: #14B8A6;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(20, 184, 166, 0.3);
+            transition: border-color 0.2s;
+        }
+
+        a:hover {
+            border-bottom-color: #14B8A6;
+        }
+
+        /* FAQ Accordion */
+        .faq-section {
+            margin-top: 12px;
+        }
+
+        .faq-item {
+            background: #ffffff;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 2px 14px rgba(0, 0, 0, 0.06);
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 18px 22px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a1a2e;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            line-height: 1.4;
+        }
+
+        .faq-question:hover {
+            color: #0d9488;
+        }
+
+        .faq-question .arrow {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            color: #14B8A6;
+        }
+
+        .faq-item.open .faq-question .arrow {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-inner {
+            padding: 0 22px 18px;
+            font-size: 14px;
+            color: #5a5a6a;
+            line-height: 1.7;
+        }
+
+        .faq-answer-inner p {
+            font-size: 14px;
+            color: #5a5a6a;
+            margin-bottom: 10px;
+        }
+
+        .faq-answer-inner p:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-answer-inner ol, .faq-answer-inner ul {
+            font-size: 14px;
+            color: #5a5a6a;
+        }
+
+        /* Step cards */
+        .step-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px 22px;
+            margin: 12px 0;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .step-card .step-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #14B8A6, #0d9488);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .step-card .step-title {
+            font-weight: 600;
+            color: #1a1a2e;
+            font-size: 15px;
+            display: inline;
+        }
+
+        .step-card .step-desc {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #5a5a6a;
+            padding-left: 38px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.06) 0%, rgba(20, 184, 166, 0.03) 100%);
+            border: 1px solid rgba(20, 184, 166, 0.18);
+            border-radius: 12px;
+            padding: 20px 22px;
+            margin: 18px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 28px 20px 40px;
+            border-top: 1px solid rgba(20, 184, 166, 0.12);
+            margin-top: 40px;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: #8a8a9a;
+        }
+
+        .footer a {
+            font-size: 13px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: none;
+            color: #14B8A6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Support</h1>
+        <p class="subtitle">HomeBase — Home Maintenance Tracker</p>
+    </div>
+
+    <div class="container">
+
+        <!-- Contact Banner -->
+        <div class="contact-banner">
+            <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            </div>
+            <h2 style="border-left: none; padding-left: 0; margin-top: 0;">Need Help?</h2>
+            <p>We're here for you. Reach out and we'll get back to you as soon as possible.</p>
+            <a href="mailto:keshav-krishnan@outlook.com" class="email-btn">keshav-krishnan@outlook.com</a>
+        </div>
+
+        <!-- FAQ Section -->
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-section">
+
+            <div class="faq-item open">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    What is HomeBase?
+                    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>HomeBase is your personal home maintenance tracker. It helps you keep every detail about your home organized in one place -- maintenance logs, appliance warranties, contractor contacts, reminders for seasonal tasks, and photos of repairs. Think of it as a digital filing cabinet for your home.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    What's included in the free version?
+                    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>The free tier gives you basic home maintenance tracking with a limited number of maintenance log entries and core reminder functionality. It's a great way to try HomeBase before committing to Premium.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    What do I get with Premium?
+                    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>Premium unlocks the full HomeBase experience:</p>
+                        <ul>
+                            <li>Unlimited maintenance logs and history</li>
+                            <li>Photo attachments for every record</li>
+                            <li>Contractor contact management</li>
+                            <li>Appliance tracking with warranty info</li>
+                            <li>Advanced reminders and recurring tasks</li>
+                            <li>All future premium features</li>
+                        </ul>
+                        <p>Pricing: <strong>$39.99/year</strong> or <strong>$4.99/month</strong>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Where is my data stored?
+                    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>All your data is stored securely in Apple's CloudKit (iCloud) infrastructure, tied to your personal Apple ID. It syncs across all your Apple devices automatically. We don't store your data on separate servers, and we can't see your personal records.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Can I use HomeBase on multiple devices?
+                    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>Yes! Because HomeBase uses iCloud, your data syncs seamlessly across all Apple devices signed into the same Apple ID. Changes you make on your iPhone appear on your iPad, and vice versa.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    Do you sell my data?
+                    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>Absolutely not. We never sell, share, or monetize your personal data. Your home information, maintenance logs, photos, and contractor details are yours alone. Read our full <a href="privacy.html">Privacy Policy</a> for details.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question" onclick="toggleFaq(this)">
+                    What happens if I stop paying for Premium?
+                    <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner">
+                        <p>Your data won't disappear. If your subscription ends, you'll revert to the free tier. You'll still have access to your existing data but premium features (unlimited logs, photos, contractor management, etc.) will be restricted until you resubscribe.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Cancel Subscription -->
+        <h2>How to Cancel Your Subscription</h2>
+        <p>
+            Subscriptions are managed through Apple. To cancel, follow these steps on your iPhone or iPad:
+        </p>
+
+        <div class="step-card">
+            <span class="step-number">1</span>
+            <span class="step-title">Open Settings</span>
+            <p class="step-desc">Tap the <strong>Settings</strong> app on your device.</p>
+        </div>
+
+        <div class="step-card">
+            <span class="step-number">2</span>
+            <span class="step-title">Tap Your Name</span>
+            <p class="step-desc">At the top of Settings, tap your name to access your <strong>Apple ID</strong> settings.</p>
+        </div>
+
+        <div class="step-card">
+            <span class="step-number">3</span>
+            <span class="step-title">Go to Subscriptions</span>
+            <p class="step-desc">Tap <strong>Subscriptions</strong> to see all your active subscriptions.</p>
+        </div>
+
+        <div class="step-card">
+            <span class="step-number">4</span>
+            <span class="step-title">Select HomeBase</span>
+            <p class="step-desc">Find and tap <strong>HomeBase</strong> in your subscription list.</p>
+        </div>
+
+        <div class="step-card">
+            <span class="step-number">5</span>
+            <span class="step-title">Cancel Subscription</span>
+            <p class="step-desc">Tap <strong>Cancel Subscription</strong> and confirm. You'll retain access until the end of your current billing period.</p>
+        </div>
+
+        <div class="highlight-box">
+            <p><strong>Important:</strong> You must cancel at least 24 hours before your renewal date to avoid being charged for the next period. Deleting the app does not cancel your subscription.</p>
+        </div>
+
+        <!-- Delete Account / Data -->
+        <h2>How to Delete Your Account &amp; Data</h2>
+        <p>
+            You have full control over your data. Here's how to remove it:
+        </p>
+
+        <h3>Delete Data Within the App</h3>
+        <p>
+            You can delete individual maintenance logs, photos, contractor records, and appliance entries directly from within the app. Navigate to the item and use the delete option.
+        </p>
+
+        <h3>Delete All App Data</h3>
+        <p>
+            To erase all HomeBase data at once, use the data management option in the app's settings. This removes all your content from iCloud.
+        </p>
+
+        <h3>Request Complete Deletion</h3>
+        <p>
+            If you'd like us to ensure all data associated with your account is fully removed, send a request to <a href="mailto:keshav-krishnan@outlook.com">keshav-krishnan@outlook.com</a> with the subject line "Data Deletion Request." We'll process it within 30 days.
+        </p>
+
+        <div class="highlight-box">
+            <p><strong>Remember:</strong> Deleting the app doesn't automatically cancel your subscription. Make sure to cancel through your Apple ID settings first to avoid future charges.</p>
+        </div>
+
+        <!-- Bug Reporting -->
+        <h2>Report a Bug</h2>
+        <p>
+            Found something that doesn't work quite right? We want to know about it. When reporting a bug, include as much detail as possible so we can track it down quickly:
+        </p>
+        <ul>
+            <li><strong>What happened</strong> -- describe the issue clearly</li>
+            <li><strong>What you expected</strong> -- tell us the behavior you anticipated</li>
+            <li><strong>Steps to reproduce</strong> -- how can we recreate the problem?</li>
+            <li><strong>Device &amp; iOS version</strong> -- e.g., iPhone 15 Pro, iOS 19.3</li>
+            <li><strong>Screenshots</strong> -- attach them if possible</li>
+        </ul>
+        <p>
+            Send bug reports to <a href="mailto:keshav-krishnan@outlook.com">keshav-krishnan@outlook.com</a> with "Bug Report" in the subject line. We review every report and prioritize fixes.
+        </p>
+
+        <!-- Feature Requests -->
+        <h2>Feature Requests</h2>
+        <p>
+            Have an idea that would make HomeBase better? We'd love to hear it. Drop us a line at <a href="mailto:keshav-krishnan@outlook.com">keshav-krishnan@outlook.com</a> with "Feature Request" in the subject. We can't promise everything will make it in, but every suggestion gets read and considered.
+        </p>
+
+        <div class="footer">
+            <div class="nav-links">
+                <a href="terms.html">Terms of Service</a>
+                <a href="privacy.html">Privacy Policy</a>
+            </div>
+            <p>&copy; 2026 HomeBase. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleFaq(button) {
+            const item = button.parentElement;
+            const isOpen = item.classList.contains('open');
+
+            // Close all items
+            document.querySelectorAll('.faq-item').forEach(function(el) {
+                el.classList.remove('open');
+            });
+
+            // Toggle clicked item
+            if (!isOpen) {
+                item.classList.add('open');
+            }
+        }
+    </script>
+</body>
+</html>

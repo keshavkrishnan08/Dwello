@@ -1,0 +1,22 @@
+# Xcode
+*.xcuserstate
+xcuserdata/
+*.xcworkspace/xcuserdata/
+DerivedData/
+build/
+*.moved-aside
+*.hmap
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Dependencies
+Pods/
+Carthage/
+
+# Secrets
+.env
+*.pem
+HomeRepair/

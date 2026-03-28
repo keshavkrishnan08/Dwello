@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomeBase — Terms of Service</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #FFFAF5;
+            color: #1a1a2e;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0d9488 0%, #14B8A6 50%, #2dd4bf 100%);
+            padding: 48px 24px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%);
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10%, 10%); }
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+
+        .header .subtitle {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.85);
+            margin-top: 8px;
+            font-weight: 400;
+            position: relative;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+        }
+
+        .last-updated {
+            display: inline-block;
+            background: rgba(20, 184, 166, 0.1);
+            color: #0d9488;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            margin-bottom: 28px;
+        }
+
+        .intro {
+            font-size: 16px;
+            color: #4a4a5a;
+            margin-bottom: 36px;
+            padding-bottom: 28px;
+            border-bottom: 1px solid rgba(20, 184, 166, 0.15);
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-top: 36px;
+            margin-bottom: 14px;
+            padding-left: 14px;
+            border-left: 3px solid #14B8A6;
+        }
+
+        h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: #2d2d42;
+            margin-top: 22px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 15px;
+            color: #4a4a5a;
+            margin-bottom: 14px;
+        }
+
+        ul, ol {
+            margin: 12px 0 16px 20px;
+            color: #4a4a5a;
+            font-size: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            padding-left: 4px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.06) 0%, rgba(20, 184, 166, 0.03) 100%);
+            border: 1px solid rgba(20, 184, 166, 0.18);
+            border-radius: 12px;
+            padding: 20px 22px;
+            margin: 18px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 8px;
+        }
+
+        .highlight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .pricing-card {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 22px 24px;
+            margin: 16px 0;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .pricing-card .plan-name {
+            font-weight: 700;
+            color: #14B8A6;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 4px;
+        }
+
+        .pricing-card .plan-price {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+
+        .pricing-card .plan-period {
+            font-size: 14px;
+            color: #8a8a9a;
+            font-weight: 400;
+        }
+
+        strong {
+            color: #2d2d42;
+            font-weight: 600;
+        }
+
+        a {
+            color: #14B8A6;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(20, 184, 166, 0.3);
+            transition: border-color 0.2s;
+        }
+
+        a:hover {
+            border-bottom-color: #14B8A6;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 28px 20px 40px;
+            border-top: 1px solid rgba(20, 184, 166, 0.12);
+            margin-top: 40px;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: #8a8a9a;
+        }
+
+        .footer a {
+            font-size: 13px;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+
+        .nav-links a {
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: none;
+            color: #14B8A6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Terms of Service</h1>
+        <p class="subtitle">HomeBase — Home Maintenance Tracker</p>
+    </div>
+
+    <div class="container">
+        <span class="last-updated">Last Updated: March 28, 2026</span>
+
+        <p class="intro">
+            Welcome to HomeBase. By downloading, installing, or using our app, you agree to these Terms of Service. Please read them carefully before proceeding.
+        </p>
+
+        <h2>1. Acceptance of Terms</h2>
+        <p>
+            These Terms of Service ("Terms") govern your use of the HomeBase mobile application ("App") operated by HomeBase ("we," "us," or "our"). By accessing or using the App, you confirm that you accept these Terms and agree to comply with them. If you disagree with any part, you must not use the App.
+        </p>
+
+        <h2>2. Description of Service</h2>
+        <p>
+            HomeBase is a home maintenance tracking application that helps you organize maintenance logs, store appliance information, manage contractor contacts, set reminders, and keep your home running smoothly. The App is available with both free and premium subscription tiers.
+        </p>
+
+        <h2>3. Subscriptions &amp; Pricing</h2>
+
+        <h3>Free Tier</h3>
+        <p>
+            HomeBase offers a free tier that includes basic home maintenance tracking, limited maintenance log entries, and core reminder functionality.
+        </p>
+
+        <h3>Premium Subscription</h3>
+        <p>
+            For the full HomeBase experience, our Premium subscription unlocks unlimited maintenance logs, photo attachments, contractor management, appliance tracking, advanced reminders, and all future premium features.
+        </p>
+
+        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+            <div class="pricing-card" style="flex: 1; min-width: 200px;">
+                <div class="plan-name">Yearly</div>
+                <div class="plan-price">$39.99 <span class="plan-period">/ year</span></div>
+            </div>
+            <div class="pricing-card" style="flex: 1; min-width: 200px;">
+                <div class="plan-name">Monthly</div>
+                <div class="plan-price">$4.99 <span class="plan-period">/ month</span></div>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <p><strong>Auto-Renewal:</strong> Subscriptions automatically renew unless you turn off auto-renewal at least 24 hours before the end of the current billing period. Your Apple ID account will be charged for renewal within 24 hours prior to the end of the current period.</p>
+            <p><strong>Managing Subscriptions:</strong> You can manage or cancel your subscription at any time by going to <strong>Settings &gt; [Your Name] &gt; Subscriptions</strong> on your Apple device.</p>
+            <p><strong>No Refunds:</strong> Payment is processed through Apple. Refund requests must be directed to Apple, as we cannot issue refunds for App Store purchases. Any unused portion of a free trial (if offered) is forfeited upon purchasing a subscription.</p>
+        </div>
+
+        <h2>4. Free Trials</h2>
+        <p>
+            We may offer free trial periods from time to time. If a free trial is available, you won't be charged until the trial expires. You can cancel at any time during the trial period through your Apple ID subscription settings. If you don't cancel before the trial ends, your subscription will begin automatically and your account will be charged.
+        </p>
+
+        <h2>5. User Accounts &amp; Responsibilities</h2>
+        <p>You agree to:</p>
+        <ul>
+            <li>Provide accurate, current information when using the App</li>
+            <li>Keep your iCloud credentials secure and confidential</li>
+            <li>Accept responsibility for all activity under your account</li>
+            <li>Use the App only for lawful, personal home maintenance tracking purposes</li>
+            <li>Not attempt to reverse-engineer, decompile, or tamper with the App</li>
+            <li>Not use the App to store or transmit malicious content</li>
+        </ul>
+        <p>
+            You are solely responsible for the accuracy of any data you enter, including maintenance logs, contractor details, and appliance information.
+        </p>
+
+        <h2>6. Intellectual Property</h2>
+        <p>
+            The App, including its design, code, graphics, logos, and content, is owned by HomeBase and protected by copyright, trademark, and other intellectual property laws. You receive a limited, non-exclusive, non-transferable license to use the App for personal, non-commercial purposes.
+        </p>
+        <p>
+            You retain ownership of any data, photos, and content you create within the App. By using the App, you grant us a limited license to process and store that content solely to provide the service.
+        </p>
+
+        <h2>7. Data &amp; Privacy</h2>
+        <p>
+            Your privacy matters. We store your data using Apple's CloudKit/iCloud infrastructure. Please review our <a href="privacy.html">Privacy Policy</a> for full details on how we collect, use, and protect your information.
+        </p>
+
+        <h2>8. Disclaimer of Warranties</h2>
+        <p>
+            The App is provided on an "as is" and "as available" basis. We make no warranties, express or implied, regarding the App's reliability, accuracy, availability, or fitness for a particular purpose. HomeBase does not provide professional home maintenance, repair, or contractor advice. Always consult qualified professionals for significant home repairs.
+        </p>
+
+        <h2>9. Limitation of Liability</h2>
+        <div class="highlight-box">
+            <p>
+                To the maximum extent permitted by applicable law, HomeBase shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of data, loss of profits, or property damage arising from your use of the App.
+            </p>
+            <p>
+                Our total liability for any claim related to the App shall not exceed the amount you paid for the subscription in the 12 months preceding the claim.
+            </p>
+        </div>
+
+        <h2>10. Indemnification</h2>
+        <p>
+            You agree to indemnify and hold harmless HomeBase, its affiliates, and its officers from any claims, damages, or expenses arising from your use of the App, your violation of these Terms, or your violation of any third-party rights.
+        </p>
+
+        <h2>11. Termination</h2>
+        <p>
+            We reserve the right to suspend or terminate your access to the App at any time if you violate these Terms. You may stop using the App at any time. Upon termination:
+        </p>
+        <ul>
+            <li>Your right to use the App ceases immediately</li>
+            <li>Active subscriptions should be cancelled through Apple to avoid future charges</li>
+            <li>Your data stored in iCloud remains subject to Apple's data retention policies</li>
+            <li>You may request deletion of your data by contacting us</li>
+        </ul>
+
+        <h2>12. Changes to These Terms</h2>
+        <p>
+            We may update these Terms from time to time. When we make material changes, we'll update the "Last Updated" date and notify you through the App. Continued use after changes take effect means you accept the revised Terms.
+        </p>
+
+        <h2>13. Governing Law</h2>
+        <p>
+            These Terms are governed by and construed in accordance with the laws of the United States. Any disputes arising under these Terms shall be resolved in the appropriate courts of that jurisdiction.
+        </p>
+
+        <h2>14. Contact Us</h2>
+        <p>
+            Questions about these Terms? Reach out to us at:
+        </p>
+        <p>
+            <a href="mailto:keshav-krishnan@outlook.com">keshav-krishnan@outlook.com</a>
+        </p>
+
+        <div class="footer">
+            <div class="nav-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="support.html">Support</a>
+            </div>
+            <p>&copy; 2026 HomeBase. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
