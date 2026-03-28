@@ -247,7 +247,7 @@ struct LogTabView: View {
 
         savedEntryTitle = trimmedTitle
         savedEntryCategory = category
-        appStore.addLog(entry)
+        appStore.addLog(entry, autoSchedule: false)
 
         withAnimation(HBAnimation.springBounce) { showingSaveAnimation = true }
         UINotificationFeedbackGenerator().notificationOccurred(.success)
@@ -294,33 +294,33 @@ struct FollowUpReminderSheet: View {
     let appStore: AppStore
     @Environment(\.dismiss) private var dismiss
 
-    @State private var selectedInterval: QuickInterval = .threeMonths
-    @State private var customDate: Date = Calendar.current.date(byAdding: .month, value: 3, to: Date()) ?? Date()
+    @State private var selectedOption: Int = 0 // 0 = recommended
+    @State private var customDate: Date = Date()
 
-    enum QuickInterval: String, CaseIterable, Identifiable {
-        case oneMonth = "1 month"
-        case threeMonths = "3 months"
-        case sixMonths = "6 months"
-        case oneYear = "1 year"
-        var id: String { rawValue }
+    private var recommended: (date: Date, label: String) {
+        appStore.suggestedFollowUp(for: title, category: category)
+    }
 
-        var date: Date {
-            let cal = Calendar.current
-            switch self {
-            case .oneMonth: return cal.date(byAdding: .month, value: 1, to: Date()) ?? Date()
-            case .threeMonths: return cal.date(byAdding: .month, value: 3, to: Date()) ?? Date()
-            case .sixMonths: return cal.date(byAdding: .month, value: 6, to: Date()) ?? Date()
-            case .oneYear: return cal.date(byAdding: .year, value: 1, to: Date()) ?? Date()
-            }
+    private let manualOptions: [(String, Int)] = [
+        ("1 month", 30),
+        ("3 months", 90),
+        ("6 months", 180),
+        ("1 year", 365),
+    ]
+
+    private var selectedDate: Date {
+        if selectedOption == 0 {
+            return recommended.date
+        } else if selectedOption <= manualOptions.count {
+            let days = manualOptions[selectedOption - 1].1
+            return Calendar.current.date(byAdding: .day, value: days, to: Date()) ?? Date()
         }
+        return customDate
     }
 
     var body: some View {
         VStack(spacing: HBSpacing.lg) {
-            // Handle
-            RoundedRectangle(cornerRadius: 3)
-                .fill(Color.hbBorder)
-                .frame(width: 36, height: 5)
+            RoundedRectangle(cornerRadius: 3).fill(Color.hbBorder).frame(width: 36, height: 5)
                 .padding(.top, HBSpacing.sm)
 
             VStack(spacing: HBSpacing.sm) {
@@ -328,45 +328,79 @@ struct FollowUpReminderSheet: View {
                     .font(.system(size: 28))
                     .foregroundColor(.hbPrimary)
 
-                Text("Schedule next check-in?")
+                Text("Next check-in")
                     .font(.system(size: 20, weight: .bold, design: .rounded))
                     .foregroundColor(.hbTextPrimary)
 
-                Text("Set a reminder for \"\(title)\"")
+                Text("\"\(title)\"")
                     .font(.system(size: 14))
                     .foregroundColor(.hbTextSecondary)
-                    .multilineTextAlignment(.center)
             }
 
-            // Quick interval buttons
-            HStack(spacing: HBSpacing.sm) {
-                ForEach(QuickInterval.allCases) { interval in
-                    Button(action: {
-                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                            selectedInterval = interval
-                            customDate = interval.date
+            // Recommended option (from scheduler)
+            VStack(spacing: HBSpacing.sm) {
+                Button(action: {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { selectedOption = 0 }
+                }) {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.hbPrimary)
+                                Text("Recommended")
+                                    .font(.system(size: 11, weight: .bold))
+                                    .foregroundColor(.hbPrimary)
+                                    .textCase(.uppercase)
+                                    .tracking(0.5)
+                            }
+                            Text("\(recommended.label) — \(recommended.date.formatted(.dateTime.month(.abbreviated).day().year()))")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.hbTextPrimary)
                         }
-                    }) {
-                        Text(interval.rawValue)
-                            .font(.system(size: 13, weight: selectedInterval == interval ? .semibold : .medium))
-                            .foregroundColor(selectedInterval == interval ? .white : .hbPrimary)
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 10)
-                            .background(selectedInterval == interval ? Color.hbPrimary : Color.hbPrimary.opacity(0.06))
-                            .cornerRadius(HBRadii.chip)
+                        Spacer()
+                        Image(systemName: selectedOption == 0 ? "checkmark.circle.fill" : "circle")
+                            .foregroundColor(selectedOption == 0 ? .hbPrimary : .hbBorder)
                     }
-                    .buttonStyle(ScaleButtonStyle())
+                    .padding(HBSpacing.md)
+                    .background(selectedOption == 0 ? Color.hbPrimary.opacity(0.04) : Color.hbSurface)
+                    .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(selectedOption == 0 ? Color.hbPrimary : Color.hbBorder.opacity(0.3), lineWidth: selectedOption == 0 ? 1.5 : 1)
+                    )
+                }
+                .buttonStyle(.plain)
+
+                // Manual options
+                HStack(spacing: HBSpacing.sm) {
+                    ForEach(Array(manualOptions.enumerated()), id: \.offset) { idx, opt in
+                        let optIdx = idx + 1
+                        Button(action: {
+                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { selectedOption = optIdx }
+                        }) {
+                            Text(opt.0)
+                                .font(.system(size: 12, weight: selectedOption == optIdx ? .semibold : .medium))
+                                .foregroundColor(selectedOption == optIdx ? .white : .hbPrimary)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 8)
+                                .background(selectedOption == optIdx ? Color.hbPrimary : Color.hbPrimary.opacity(0.06))
+                                .cornerRadius(HBRadii.chip)
+                        }
+                        .buttonStyle(ScaleButtonStyle())
+                    }
                 }
             }
             .padding(.horizontal, HBSpacing.lg)
 
-            // Due date preview
+            // Date preview
             HStack {
                 Image(systemName: "calendar")
                     .foregroundColor(.hbPrimary)
-                Text("Due: \(customDate.formatted(.dateTime.month(.wide).day().year()))")
-                    .font(.system(size: 15, weight: .medium))
+                Text(selectedDate.formatted(.dateTime.weekday(.wide).month(.wide).day().year()))
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.hbTextPrimary)
             }
             .padding(HBSpacing.sm + 4)
@@ -377,21 +411,30 @@ struct FollowUpReminderSheet: View {
 
             VStack(spacing: HBSpacing.sm) {
                 HBButton(title: "Set Reminder") {
+                    let info = MaintenanceScheduler.recommendedInterval(for: title, category: category)
                     let reminder = Reminder(
                         id: UUID(),
                         homeId: appStore.currentHome.id,
                         title: title,
-                        dueDate: customDate,
-                        recurring: nil,
+                        dueDate: selectedDate,
+                        recurring: appStore.intervalFromDays(info.days),
                         category: category
                     )
                     appStore.addReminder(reminder)
                     dismiss()
                 }
 
-                Button(action: { dismiss() }) {
-                    Text("Skip")
-                        .font(.system(size: 15, weight: .medium))
+                Button(action: {
+                    // Skip but still auto-schedule via scheduler
+                    appStore.scheduleFollowUp(for: LogEntry(
+                        id: UUID(), homeId: appStore.currentHome.id,
+                        category: category, title: title, date: Date(),
+                        priority: .routine, photoURLs: []
+                    ))
+                    dismiss()
+                }) {
+                    Text("Use recommended")
+                        .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.hbTextSecondary)
                         .frame(minHeight: 44)
                 }
