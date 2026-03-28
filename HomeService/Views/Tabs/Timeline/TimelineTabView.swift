@@ -10,12 +10,14 @@ struct TimelineTabView: View {
     private var calendar: Calendar { Calendar.current }
 
     private var logsForSelectedDate: [LogEntry] {
-        appStore.logs.filter { calendar.isDate($0.date, inSameDayAs: selectedDate) }
+        let selKey = dayKey(selectedDate)
+        return appStore.logs.filter { dayKey($0.date) == selKey }
             .sorted { $0.date > $1.date }
     }
 
     private var remindersForSelectedDate: [Reminder] {
-        appStore.reminders.filter { !$0.isCompleted && calendar.isDate($0.dueDate, inSameDayAs: selectedDate) }
+        let selKey = dayKey(selectedDate)
+        return appStore.reminders.filter { !$0.isCompleted && dayKey($0.dueDate) == selKey }
     }
 
     private func dayKey(_ date: Date) -> String {
@@ -91,7 +93,7 @@ struct TimelineTabView: View {
                                 let dk = dayKey(day)
                                 let hasLog = daysWithLogs.contains(dk)
                                 let hasReminder = daysWithReminders.contains(dk)
-                                let logCount = appStore.logs.filter { calendar.isDate($0.date, inSameDayAs: day) }.count
+                                let logCount = appStore.logs.filter { dayKey($0.date) == dk }.count
 
                                 Button(action: {
                                     UIImpactFeedbackGenerator(style: .light).impactOccurred()

@@ -35,7 +35,7 @@ struct ProfileTabView: View {
                             HStack(spacing: HBSpacing.sm) {
                                 Image(systemName: appStore.user.subscriptionTier == .premium ? "crown.fill" : "person.fill")
                                     .font(.system(size: 12))
-                                Text(appStore.user.subscriptionTier == .premium ? "Premium" : "Free Plan")
+                                Text(appStore.user.subscriptionTier == .premium ? "Premium" : "Member")
                                     .font(HBTypography.caption)
                                     .fontWeight(.semibold)
                             }
