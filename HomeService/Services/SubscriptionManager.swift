@@ -5,9 +5,9 @@ import SwiftUI
 class SubscriptionManager {
     static let shared = SubscriptionManager()
 
-    // Product IDs — configure these in App Store Connect
-    static let yearlyID = "com.homebase.premium.yearly"
-    static let monthlyID = "com.homebase.premium.monthly"
+    // Product IDs — must match App Store Connect and Configuration.storekit
+    static let yearlyID = "com.dwello.premium.yearly"
+    static let monthlyID = "com.dwello.premium.monthly"
     static let allProductIDs: Set<String> = [yearlyID, monthlyID]
 
     // State
