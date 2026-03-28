@@ -666,11 +666,11 @@ private struct PaywallStep: View {
         if let product = selectedPlan == .yearly ? subManager.yearlyProduct : subManager.monthlyProduct {
             return "Continue — \(product.displayPrice)/\(selectedPlan == .yearly ? "yr" : "mo")"
         }
-        return selectedPlan == .yearly ? "Continue — $39.99/yr" : "Continue — $4.99/mo"
+        return selectedPlan == .yearly ? "Continue — $24.99/yr" : "Continue — $4.99/mo"
     }
 
     private var yearlyPrice: String {
-        subManager.yearlyProduct.map { "\($0.displayPrice)" } ?? "$39.99"
+        subManager.yearlyProduct.map { "\($0.displayPrice)" } ?? "$24.99"
     }
 
     private var monthlyPrice: String {
