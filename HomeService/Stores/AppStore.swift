@@ -28,9 +28,6 @@ class AppStore {
     init() {
         load()
         applyOnboardingResponses()
-        if logs.isEmpty {
-            seedRealisticData()
-        }
         refreshAchievements()
     }
 
@@ -67,7 +64,12 @@ class AppStore {
     }
 
     var homeHealthScore: Int {
-        computeHealthScore()
+        let result = computeScore()
+        return result.0
+    }
+
+    var homeHealthBreakdown: [ScoreComponent] {
+        computeScore().1
     }
 
     var monthlySpend: Double {
@@ -157,17 +159,21 @@ class AppStore {
 
     // MARK: - ML Health Score
 
-    var healthScoreBreakdown: [ScoreComponent] = []
-
     var categoryGrades: [CategoryGrade] {
         HomeCategory.allCases.filter { $0 != .other }.map { cat in
             HomeHealthScorer.gradeCategory(cat, logs: logs, reminders: reminders)
         }
     }
 
-    private func computeHealthScore() -> Int {
+    private func computeScore() -> (Int, [ScoreComponent]) {
+        // If no data yet, return neutral score
+        guard !logs.isEmpty || !reminders.isEmpty else {
+            return (75, [ScoreComponent(label: "Log your first task to get a real score", impact: 0, type: .positive)])
+        }
+
         let sixMonthsAgo = Calendar.current.date(byAdding: .month, value: -6, to: Date()) ?? Date()
         let thirtyDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: Date()) ?? Date()
+        let threeMonthsAgo = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
 
         let homeAge: Int
         if let yearBuilt = currentHome.yearBuilt {
@@ -183,7 +189,7 @@ class AppStore {
             overdueCount: overdueReminders.count,
             daysSinceLastLog: daysSinceLastService,
             logsThisMonth: monthlyTaskCount,
-            logsThisQuarter: logs.filter { $0.date > Calendar.current.date(byAdding: .month, value: -3, to: Date())! }.count,
+            logsThisQuarter: logs.filter { $0.date > threeMonthsAgo }.count,
             categoriesCoveredLast6Mo: Set(logs.filter { $0.date > sixMonthsAgo }.map(\.category)).count,
             totalCategories: 6,
             expiredWarranties: appliances.filter { ($0.warrantyExpiry ?? .distantFuture) < Date() }.count,
@@ -195,8 +201,7 @@ class AppStore {
         )
 
         let result = HomeHealthScorer.score(features: features)
-        healthScoreBreakdown = result.breakdown
-        return result.score
+        return (result.score, result.breakdown)
     }
 
     // MARK: - Mutations
@@ -291,20 +296,26 @@ class AppStore {
         reminders.append(reminder)
     }
 
-    // MARK: - Quick Log Templates
+    // MARK: - Custom Quick Logs
 
-    static let quickLogTemplates: [(String, HomeCategory, Double?)] = [
-        ("Changed HVAC filter", .hvac, 25),
-        ("Cleaned gutters", .exterior, 0),
-        ("Tested smoke detectors", .electrical, 0),
-        ("Replaced faucet washer", .plumbing, 5),
-        ("Mowed lawn", .exterior, 0),
-        ("Changed light bulbs", .electrical, 12),
-        ("Cleaned dryer vent", .appliance, 0),
-        ("Checked water heater", .plumbing, 0),
-        ("Inspected roof", .structural, 0),
-        ("Replaced AC filter", .hvac, 18),
-    ]
+    struct QuickLogItem: Codable {
+        let title: String
+        let category: HomeCategory
+        let cost: Double?
+    }
+
+    var customQuickLogs: [QuickLogItem] = [] {
+        didSet {
+            if let data = try? JSONEncoder().encode(customQuickLogs) {
+                UserDefaults.standard.set(data, forKey: "hb_quick_logs")
+            }
+        }
+    }
+
+    func addQuickLogShortcut(title: String, category: HomeCategory, cost: Double?) {
+        let item = QuickLogItem(title: title, category: category, cost: cost)
+        customQuickLogs.append(item)
+    }
 
     func quickLog(title: String, category: HomeCategory, cost: Double?) {
         let entry = LogEntry(
@@ -385,6 +396,10 @@ class AppStore {
 
     private func load() {
         let decoder = JSONDecoder()
+        if let data = UserDefaults.standard.data(forKey: "hb_quick_logs"),
+           let decoded = try? decoder.decode([QuickLogItem].self, from: data) {
+            customQuickLogs = decoded
+        }
         if let data = UserDefaults.standard.data(forKey: Self.logsKey),
            let decoded = try? decoder.decode([LogEntry].self, from: data) {
             logs = decoded

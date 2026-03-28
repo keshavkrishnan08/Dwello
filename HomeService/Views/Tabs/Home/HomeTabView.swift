@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeTabView: View {
     @Environment(AppStore.self) private var appStore
     @State private var appeared = false
+    @State private var showAddQuickLog = false
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -153,50 +154,104 @@ struct HomeTabView: View {
                         .opacity(appeared ? 1 : 0)
                         .animation(.easeOut(duration: 0.4).delay(0.15), value: appeared)
 
-                        // Quick log — one-tap common tasks
+                        // Quick log — example + add custom
                         VStack(alignment: .leading, spacing: HBSpacing.sm) {
                             HStack {
                                 Text("Quick Log")
                                     .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(.hbTextPrimary)
                                 Spacer()
-                                Image(systemName: "bolt.fill")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.hbPrimary)
                             }
 
-                            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: HBSpacing.sm) {
-                                ForEach(AppStore.quickLogTemplates.prefix(4), id: \.0) { template in
+                            // Show user's custom quick logs or one example
+                            if appStore.customQuickLogs.isEmpty {
+                                // One example
+                                Button(action: {
+                                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                                    appStore.quickLog(title: "Changed HVAC filter", category: .hvac, cost: 25)
+                                }) {
+                                    HStack(spacing: HBSpacing.sm) {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(Color.hbPrimary.opacity(0.08))
+                                                .frame(width: 32, height: 32)
+                                            Image(systemName: "thermometer.medium")
+                                                .font(.system(size: 14))
+                                                .foregroundColor(.hbPrimary)
+                                        }
+                                        VStack(alignment: .leading, spacing: 1) {
+                                            Text("Changed HVAC filter")
+                                                .font(.system(size: 13, weight: .medium))
+                                                .foregroundColor(.hbTextPrimary)
+                                            Text("$25 · HVAC")
+                                                .font(.system(size: 11))
+                                                .foregroundColor(.hbTextSecondary)
+                                        }
+                                        Spacer()
+                                        Text("Tap to log")
+                                            .font(.system(size: 11, weight: .medium))
+                                            .foregroundColor(.hbPrimary)
+                                    }
+                                    .padding(HBSpacing.sm + 2)
+                                    .background(Color.hbSurface)
+                                    .cornerRadius(12)
+                                }
+                                .buttonStyle(ScaleButtonStyle())
+                            } else {
+                                ForEach(appStore.customQuickLogs, id: \.title) { ql in
                                     Button(action: {
                                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                            appStore.quickLog(title: template.0, category: template.1, cost: template.2)
-                                        }
+                                        appStore.quickLog(title: ql.title, category: ql.category, cost: ql.cost)
                                     }) {
                                         HStack(spacing: HBSpacing.sm) {
                                             ZStack {
                                                 RoundedRectangle(cornerRadius: 8)
-                                                    .fill(template.1.color.opacity(0.08))
+                                                    .fill(ql.category.color.opacity(0.08))
                                                     .frame(width: 32, height: 32)
-                                                Image(systemName: template.1.icon)
+                                                Image(systemName: ql.category.icon)
                                                     .font(.system(size: 14))
-                                                    .foregroundColor(template.1.color)
+                                                    .foregroundColor(ql.category.color)
                                             }
-                                            Text(template.0)
-                                                .font(.system(size: 12, weight: .medium))
-                                                .foregroundColor(.hbTextPrimary)
-                                                .lineLimit(2)
-                                                .multilineTextAlignment(.leading)
+                                            VStack(alignment: .leading, spacing: 1) {
+                                                Text(ql.title)
+                                                    .font(.system(size: 13, weight: .medium))
+                                                    .foregroundColor(.hbTextPrimary)
+                                                if let cost = ql.cost, cost > 0 {
+                                                    Text("$\(Int(cost)) · \(ql.category.rawValue)")
+                                                        .font(.system(size: 11))
+                                                        .foregroundColor(.hbTextSecondary)
+                                                }
+                                            }
                                             Spacer()
                                         }
                                         .padding(HBSpacing.sm + 2)
                                         .background(Color.hbSurface)
                                         .cornerRadius(12)
-                                        .hbShadow(.sm)
                                     }
                                     .buttonStyle(ScaleButtonStyle())
                                 }
                             }
+
+                            // Add custom quick log button
+                            Button(action: { showAddQuickLog = true }) {
+                                HStack(spacing: HBSpacing.sm) {
+                                    Image(systemName: "plus.circle.fill")
+                                        .font(.system(size: 18))
+                                        .foregroundColor(.hbPrimary)
+                                    Text("Create quick log shortcut")
+                                        .font(.system(size: 13, weight: .medium))
+                                        .foregroundColor(.hbPrimary)
+                                    Spacer()
+                                }
+                                .padding(HBSpacing.sm + 2)
+                                .background(Color.hbPrimary.opacity(0.04))
+                                .cornerRadius(12)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(Color.hbPrimary.opacity(0.15), lineWidth: 1)
+                                )
+                            }
+                            .buttonStyle(ScaleButtonStyle())
                         }
                         .padding(.horizontal, HBSpacing.lg)
                         .opacity(appeared ? 1 : 0)
@@ -324,6 +379,10 @@ struct HomeTabView: View {
                 }
             }
             .navigationBarHidden(true)
+            .sheet(isPresented: $showAddQuickLog) {
+                AddQuickLogSheet(appStore: appStore)
+                    .presentationDetents([.medium])
+            }
         }
         .onAppear {
             withAnimation { appeared = true }
@@ -391,5 +450,59 @@ struct HomeHealthScoreCard: View {
                     .font(HBTypography.bodySmall).foregroundColor(.hbTextSecondary).lineLimit(2)
             }
         }.padding(HBSpacing.lg).background(Color.hbSurface).cornerRadius(HBRadii.card).hbShadow(.sm)
+    }
+}
+
+// MARK: - Add Quick Log Sheet
+struct AddQuickLogSheet: View {
+    let appStore: AppStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var title = ""
+    @State private var category: HomeCategory = .hvac
+    @State private var cost = ""
+
+    private var isValid: Bool {
+        !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    var body: some View {
+        VStack(spacing: HBSpacing.lg) {
+            RoundedRectangle(cornerRadius: 3).fill(Color.hbBorder).frame(width: 36, height: 5)
+                .padding(.top, HBSpacing.sm)
+
+            Text("New Quick Log")
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundColor(.hbTextPrimary)
+
+            VStack(spacing: HBSpacing.md) {
+                HBTextField(title: "Task name", text: $title, placeholder: "e.g., Changed HVAC filter", icon: "wrench.fill")
+
+                CategoryChipSelector(selected: $category)
+
+                HBCurrencyField(title: "Cost (optional)", value: $cost)
+            }
+            .padding(.horizontal, HBSpacing.lg)
+
+            Spacer()
+
+            VStack(spacing: HBSpacing.sm) {
+                HBButton(title: "Save & Log Now", isEnabled: isValid) {
+                    let parsedCost = Double(cost.replacingOccurrences(of: ",", with: ""))
+                    let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+                    appStore.addQuickLogShortcut(title: trimmed, category: category, cost: parsedCost)
+                    appStore.quickLog(title: trimmed, category: category, cost: parsedCost)
+                    dismiss()
+                }
+
+                HBButton(title: "Save Shortcut Only", style: .secondary, isEnabled: isValid) {
+                    let parsedCost = Double(cost.replacingOccurrences(of: ",", with: ""))
+                    let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+                    appStore.addQuickLogShortcut(title: trimmed, category: category, cost: parsedCost)
+                    dismiss()
+                }
+            }
+            .padding(.horizontal, HBSpacing.lg)
+            .padding(.bottom, HBSpacing.lg)
+        }
     }
 }
