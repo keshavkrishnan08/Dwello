@@ -206,45 +206,62 @@ class AppStore {
 
     // MARK: - Mutations
 
-    func addLog(_ entry: LogEntry) {
+    /// Add a log entry. Set `autoSchedule: true` (default) to auto-create the next
+    /// maintenance reminder via MaintenanceScheduler. Set `false` when the caller
+    /// handles scheduling separately (e.g. the follow-up sheet).
+    func addLog(_ entry: LogEntry, autoSchedule: Bool = true) {
         logs.insert(entry, at: 0)
 
-        // Auto-schedule next check-in based on task type
-        let nextDate: Date
-        let recurInterval: RecurringInterval?
-
-        if let interval = entry.recurringInterval {
-            // User explicitly set recurring
-            nextDate = nextOccurrence(from: entry.date, interval: interval)
-            recurInterval = interval
-        } else {
-            // Smart scheduling based on task + category
-            nextDate = MaintenanceScheduler.nextCheckIn(for: entry.title, category: entry.category, from: entry.date)
-            let info = MaintenanceScheduler.recommendedInterval(for: entry.title, category: entry.category)
-            recurInterval = intervalFromDays(info.days)
-        }
-
-        // Don't duplicate if a reminder with the same title already exists in the future
-        let alreadyScheduled = reminders.contains {
-            $0.title == entry.title && !$0.isCompleted && $0.dueDate > Date()
-        }
-
-        if !alreadyScheduled {
-            let reminder = Reminder(
-                id: UUID(),
-                homeId: entry.homeId,
-                title: entry.title,
-                dueDate: nextDate,
-                recurring: recurInterval,
-                category: entry.category
-            )
-            reminders.append(reminder)
+        if autoSchedule {
+            scheduleFollowUp(for: entry)
         }
 
         refreshAchievements()
     }
 
-    private func intervalFromDays(_ days: Int) -> RecurringInterval? {
+    /// Creates a future reminder based on the task that was just logged.
+    func scheduleFollowUp(for entry: LogEntry) {
+        let nextDate: Date
+        let recurInterval: RecurringInterval?
+
+        if let interval = entry.recurringInterval {
+            nextDate = nextOccurrence(from: entry.date, interval: interval)
+            recurInterval = interval
+        } else {
+            nextDate = MaintenanceScheduler.nextCheckIn(
+                for: entry.title, category: entry.category, from: entry.date
+            )
+            let info = MaintenanceScheduler.recommendedInterval(
+                for: entry.title, category: entry.category
+            )
+            recurInterval = intervalFromDays(info.days)
+        }
+
+        // Don't duplicate
+        let alreadyScheduled = reminders.contains {
+            $0.title == entry.title && !$0.isCompleted && $0.dueDate > Date()
+        }
+        guard !alreadyScheduled else { return }
+
+        let reminder = Reminder(
+            id: UUID(),
+            homeId: entry.homeId,
+            title: entry.title,
+            dueDate: nextDate,
+            recurring: recurInterval,
+            category: entry.category
+        )
+        reminders.append(reminder)
+    }
+
+    /// Returns the recommended next check-in date for display in UI.
+    func suggestedFollowUp(for title: String, category: HomeCategory) -> (date: Date, label: String) {
+        let date = MaintenanceScheduler.nextCheckIn(for: title, category: category)
+        let info = MaintenanceScheduler.recommendedInterval(for: title, category: category)
+        return (date, info.label)
+    }
+
+    func intervalFromDays(_ days: Int) -> RecurringInterval? {
         switch days {
         case 0..<45: return .monthly
         case 45..<120: return .quarterly
