@@ -778,10 +778,6 @@ private struct PaywallStep: View {
                         }
                     }.padding(.top, HBSpacing.xs)
 
-                    Button(action: { store.complete() }) {
-                        Text("Continue with Free").font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.hbTextSecondary).frame(minHeight: 44)
-                    }
                     Spacer().frame(height: HBSpacing.lg)
                 }
             }
