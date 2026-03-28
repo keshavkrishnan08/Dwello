@@ -237,9 +237,9 @@ class AppStore {
             recurInterval = intervalFromDays(info.days)
         }
 
-        // Don't duplicate
+        // Don't duplicate — check title + category
         let alreadyScheduled = reminders.contains {
-            $0.title == entry.title && !$0.isCompleted && $0.dueDate > Date()
+            $0.title == entry.title && $0.category == entry.category && !$0.isCompleted && $0.dueDate > Date()
         }
         guard !alreadyScheduled else { return }
 
@@ -288,6 +288,13 @@ class AppStore {
             // Auto-create next occurrence if recurring
             if let interval = reminder.recurring {
                 let nextDate = nextOccurrence(from: Date(), interval: interval)
+
+                // Check for duplicates before adding
+                let alreadyExists = reminders.contains {
+                    $0.title == reminder.title && !$0.isCompleted && $0.dueDate > Date()
+                }
+                guard !alreadyExists else { return }
+
                 let next = Reminder(
                     id: UUID(),
                     homeId: reminder.homeId,
@@ -433,71 +440,6 @@ class AppStore {
            let decoded = try? decoder.decode([Appliance].self, from: data) {
             appliances = decoded
         }
-    }
-
-    // MARK: - Seed realistic demo data
-
-    private func seedRealisticData() {
-        let homeId = currentHome.id
-
-        // Realistic log history spanning 6 months
-        let now = Date()
-        logs = [
-            LogEntry(id: UUID(), homeId: homeId, category: .hvac, title: "Changed HVAC filter", date: now.addingDays(-3), cost: 25, priority: .routine, recurringInterval: .monthly, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .plumbing, title: "Fixed kitchen faucet leak", date: now.addingDays(-8), cost: 150, priority: .important, contractorId: nil, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .exterior, title: "Cleaned gutters", date: now.addingDays(-15), cost: 200, priority: .routine, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .electrical, title: "Replaced bathroom outlet (GFCI)", date: now.addingDays(-22), cost: 85, priority: .important, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .appliance, title: "Dishwasher maintenance — cleaned filter", date: now.addingDays(-30), cost: 0, priority: .routine, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .structural, title: "Patched drywall crack in hallway", date: now.addingDays(-45), cost: 45, priority: .routine, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .hvac, title: "Annual AC tune-up", date: now.addingDays(-60), cost: 180, priority: .routine, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .exterior, title: "Pressure washed driveway", date: now.addingDays(-75), cost: 0, priority: .routine, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .plumbing, title: "Replaced water heater anode rod", date: now.addingDays(-90), cost: 35, priority: .important, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .electrical, title: "Tested all smoke detectors", date: now.addingDays(-100), cost: 0, priority: .routine, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .hvac, title: "Changed HVAC filter", date: now.addingDays(-120), cost: 25, priority: .routine, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .exterior, title: "Trimmed tree branches near roof", date: now.addingDays(-140), cost: 350, priority: .important, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .structural, title: "Caulked windows — energy audit follow-up", date: now.addingDays(-160), cost: 60, priority: .routine, photoURLs: []),
-            LogEntry(id: UUID(), homeId: homeId, category: .appliance, title: "Cleaned refrigerator coils", date: now.addingDays(-170), cost: 0, priority: .routine, photoURLs: []),
-        ]
-
-        contractors = [
-            Contractor(id: UUID(), userId: user.id, name: "Mike's Plumbing", phone: "555-0123", email: "mike@plumbing.com", specialty: .plumbing, rating: 5),
-            Contractor(id: UUID(), userId: user.id, name: "Spark Electric Co", phone: "555-0456", specialty: .electrical, rating: 4),
-            Contractor(id: UUID(), userId: user.id, name: "CoolAir HVAC", phone: "555-0789", specialty: .hvac, rating: 4),
-        ]
-
-        // Auto-generate future reminders from log history using the scheduler
-        var autoReminders: [Reminder] = []
-        var seenTitles: Set<String> = []
-        for log in logs {
-            guard !seenTitles.contains(log.title) else { continue }
-            seenTitles.insert(log.title)
-            let nextDate = MaintenanceScheduler.nextCheckIn(for: log.title, category: log.category, from: log.date)
-            let info = MaintenanceScheduler.recommendedInterval(for: log.title, category: log.category)
-            autoReminders.append(Reminder(
-                id: UUID(), homeId: homeId,
-                title: log.title,
-                dueDate: nextDate,
-                recurring: intervalFromDays(info.days),
-                category: log.category
-            ))
-        }
-        // Add a few extra forward-looking ones
-        autoReminders.append(Reminder(id: UUID(), homeId: homeId, title: "Service furnace before winter", dueDate: now.addingDays(90), recurring: .annual, category: .hvac))
-        autoReminders.append(Reminder(id: UUID(), homeId: homeId, title: "Inspect attic insulation", dueDate: now.addingDays(120), recurring: .annual, category: .structural))
-        reminders = autoReminders
-
-        appliances = [
-            Appliance(id: UUID(), homeId: homeId, name: "Dishwasher", make: "Bosch", model: "SHP88PZ55N",
-                      purchaseDate: now.addingDays(-730), warrantyExpiry: now.addingDays(365)),
-            Appliance(id: UUID(), homeId: homeId, name: "Washer", make: "LG", model: "WM4000HWA",
-                      purchaseDate: now.addingDays(-1095)),
-            Appliance(id: UUID(), homeId: homeId, name: "Water Heater", make: "Rheem", model: "XE50T10HD50U0",
-                      purchaseDate: now.addingDays(-2920), warrantyExpiry: now.addingDays(-365)),
-            Appliance(id: UUID(), homeId: homeId, name: "HVAC System", make: "Carrier", model: "24ACC636A003",
-                      purchaseDate: now.addingDays(-1825)),
-            Appliance(id: UUID(), homeId: homeId, name: "Refrigerator", make: "Samsung", model: "RF28R7351SR",
-                      purchaseDate: now.addingDays(-1460)),
-        ]
     }
 
     // MARK: - Helpers
