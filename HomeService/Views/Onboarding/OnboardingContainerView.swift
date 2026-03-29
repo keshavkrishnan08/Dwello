@@ -715,46 +715,55 @@ private struct PaywallStep: View {
                             .font(.system(size: 11, weight: .bold))
                             .foregroundColor(.hbTextSecondary)
                             .tracking(1)
-                        featureRow("Unlimited maintenance logs (no monthly cap)")
-                        featureRow("Smart scheduling — auto-reminders for every task")
-                        featureRow("Full maintenance history & cost analytics")
-                        featureRow("Home Health Score with detailed breakdown")
-                        featureRow("AI-powered predictions & savings insights")
-                        featureRow("Contractor address book with ratings")
-                        featureRow("Appliance registry with warranty tracking")
-                        featureRow("PDF home reports for sale or insurance")
-                        featureRow("iCloud sync across all your devices")
-                        featureRow("Priority email support")
+                        featureRow("Unlimited maintenance logging")
+                        featureRow("Smart auto-scheduling for every task")
+                        featureRow("Home Health Score & analytics")
+                        featureRow("iCloud sync across devices")
                     }
                     .padding(.horizontal, HBSpacing.xl)
                     .opacity(appeared ? 1 : 0).animation(.easeOut(duration: 0.4).delay(0.3), value: appeared)
 
-                    // Review carousel
-                    TabView {
-                        ForEach(reviews, id: \.0) { review in
-                            VStack(spacing: HBSpacing.sm) {
-                                HStack(spacing: 2) {
-                                    ForEach(0..<5, id: \.self) { _ in
-                                        Image(systemName: "star.fill")
-                                            .font(.system(size: 12))
-                                            .foregroundColor(.hbAmber)
+                    // Review carousel — horizontal scroll
+                    VStack(spacing: HBSpacing.xs) {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: HBSpacing.md) {
+                                ForEach(reviews, id: \.0) { review in
+                                    VStack(spacing: HBSpacing.sm) {
+                                        HStack(spacing: 2) {
+                                            ForEach(0..<5, id: \.self) { _ in
+                                                Image(systemName: "star.fill")
+                                                    .font(.system(size: 11))
+                                                    .foregroundColor(.hbAmber)
+                                            }
+                                        }
+                                        Text("\"\(review.1)\"")
+                                            .font(.system(size: 13))
+                                            .foregroundColor(.hbTextPrimary)
+                                            .multilineTextAlignment(.center)
+                                            .lineLimit(3)
+                                        Text("— \(review.0)")
+                                            .font(.system(size: 11))
+                                            .foregroundColor(.hbTextSecondary)
                                     }
+                                    .padding(HBSpacing.md)
+                                    .frame(width: 240)
+                                    .background(Color.hbSurface)
+                                    .cornerRadius(HBRadii.card)
+                                    .hbShadow(.sm)
                                 }
-                                Text("\"\(review.1)\"")
-                                    .font(.system(size: 14, weight: .medium))
-                                    .foregroundColor(.hbTextPrimary)
-                                    .multilineTextAlignment(.center)
-                                    .lineLimit(3)
-                                Text("— \(review.0)")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.hbTextSecondary)
                             }
-                            .padding(HBSpacing.md)
+                            .padding(.horizontal, HBSpacing.lg)
+                        }
+
+                        // Scroll hint dots
+                        HStack(spacing: 4) {
+                            ForEach(0..<reviews.count, id: \.self) { i in
+                                Circle()
+                                    .fill(i == 0 ? Color.hbPrimary : Color.hbBorder)
+                                    .frame(width: 5, height: 5)
+                            }
                         }
                     }
-                    .tabViewStyle(.page(indexDisplayMode: .automatic))
-                    .frame(height: 120)
-                    .padding(.horizontal, HBSpacing.lg)
 
                     Spacer().frame(height: HBSpacing.sm)
 
