@@ -105,7 +105,7 @@ private struct WelcomeStep: View {
             .frame(height: 240)
 
             VStack(spacing: HBSpacing.md) {
-                Text("Welcome to\nHomeBase")
+                Text("Welcome to\nDwillo")
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .foregroundColor(.hbTextPrimary)
                     .multilineTextAlignment(.center).lineSpacing(4)

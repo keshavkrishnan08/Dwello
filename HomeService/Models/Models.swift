@@ -15,7 +15,7 @@ struct HBUser: Identifiable, Codable {
 
     static let sample = HBUser(
         id: UUID(),
-        email: "demo@homebase.app",
+        email: "demo@dwillo.com",
         name: "Alex",
         createdAt: Date(),
         subscriptionTier: .free

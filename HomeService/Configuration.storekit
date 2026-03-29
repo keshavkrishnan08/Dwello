@@ -63,15 +63,15 @@
   },
   "subscriptionGroups" : [
     {
-      "id" : "homebase_premium",
+      "id" : "dwillo_premium",
       "localizations" : [
         {
-          "description" : "Full access to all HomeBase features",
-          "displayName" : "HomeBase Premium",
+          "description" : "Full access to all Dwillo features",
+          "displayName" : "Dwillo Premium",
           "locale" : "en_US"
         }
       ],
-      "name" : "HomeBase Premium",
+      "name" : "Dwillo Premium",
       "subscriptions" : [
         {
           "adHocOffers" : [
@@ -101,7 +101,7 @@
           "productID" : "com.dwillo.premium.yearly",
           "recurringSubscriptionPeriod" : "P1Y",
           "referenceName" : "Premium Yearly",
-          "subscriptionGroupID" : "homebase_premium",
+          "subscriptionGroupID" : "dwillo_premium",
           "type" : "RecurringSubscription"
         },
         {
@@ -126,7 +126,7 @@
           "productID" : "com.dwillo.premium.monthly",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "Premium Monthly",
-          "subscriptionGroupID" : "homebase_premium",
+          "subscriptionGroupID" : "dwillo_premium",
           "type" : "RecurringSubscription"
         }
       ]
