@@ -48,14 +48,15 @@ class MaintenanceMLEngine {
     // MARK: - Savings Analysis
 
     func generateSavingsInsights() -> [SavingsInsight] {
+        guard logs.count >= 2 else { return [] }
+
         var insights: [SavingsInsight] = []
 
         // 1. Detect recurring high-cost categories
         let categorySpend = Dictionary(grouping: logs, by: \.category)
             .mapValues { entries in entries.compactMap(\.cost).reduce(0, +) }
 
-        if let topCategory = categorySpend.max(by: { $0.value < $1.value }) {
-            _ = topCategory.value / Double(max(logs.filter { $0.category == topCategory.key }.count, 1))
+        if let topCategory = categorySpend.max(by: { $0.value < $1.value }), topCategory.value > 0 {
             insights.append(SavingsInsight(
                 title: "High \(topCategory.key.rawValue) spending",
                 description: "You've spent $\(Int(topCategory.value)) on \(topCategory.key.rawValue.lowercased()). Consider preventive maintenance to reduce emergency calls.",
@@ -132,13 +133,8 @@ class MaintenanceMLEngine {
 
     func forecastCosts(months: Int = 6) -> [CostForecast] {
         let monthlySpend = computeMonthlySpend()
-        guard monthlySpend.count >= 2 else {
-            return (0..<months).map { i in
-                let date = Calendar.current.date(byAdding: .month, value: i + 1, to: Date()) ?? Date()
-                let label = date.formatted(.dateTime.month(.abbreviated))
-                return CostForecast(month: label, predicted: 200, lowerBound: 100, upperBound: 350)
-            }
-        }
+        // Need at least 2 months of data for any forecast
+        guard monthlySpend.count >= 2 else { return [] }
 
         // Simple linear regression
         let n = Double(monthlySpend.count)
@@ -170,20 +166,15 @@ class MaintenanceMLEngine {
     // MARK: - Risk Assessment
 
     func assessCategoryRisks() -> [CategoryRisk] {
+        // Only assess categories the user has actually logged
+        let loggedCategories = Set(logs.map(\.category))
+        guard !loggedCategories.isEmpty else { return [] }
+
         var risks: [CategoryRisk] = []
 
-        for category in HomeCategory.allCases where category != .other {
+        for category in loggedCategories where category != .other {
             let catLogs = logs.filter { $0.category == category }
-
-            if catLogs.isEmpty {
-                risks.append(CategoryRisk(
-                    category: category,
-                    riskScore: 40,
-                    reason: "No maintenance logged — unknown condition",
-                    daysUntilLikely: nil
-                ))
-                continue
-            }
+            guard !catLogs.isEmpty else { continue }
 
             guard let lastDate = catLogs.map(\.date).max() else { continue }
             let daysSince = Calendar.current.dateComponents([.day], from: lastDate, to: Date()).day ?? 0
