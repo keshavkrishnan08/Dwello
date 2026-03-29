@@ -4,6 +4,7 @@ struct HomeTabView: View {
     @Environment(AppStore.self) private var appStore
     @State private var appeared = false
     @State private var showAddQuickLog = false
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var greeting: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -40,7 +41,6 @@ struct HomeTabView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: HBSpacing.lg) {
-                        // Greeting — no name, just time of day + home type
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(greeting)

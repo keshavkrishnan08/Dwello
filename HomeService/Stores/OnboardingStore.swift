@@ -9,11 +9,13 @@ class OnboardingStore {
 
     func nextStep() {
         saveResponses()
+        HBHaptic.tick()
         if currentStep < totalSteps {
             withAnimation(HBAnimation.transition) {
                 currentStep += 1
             }
         } else {
+            HBHaptic.success()
             withAnimation(HBAnimation.transition) {
                 isComplete = true
             }
@@ -22,6 +24,7 @@ class OnboardingStore {
 
     func previousStep() {
         if currentStep > 1 {
+            HBHaptic.light()
             withAnimation(HBAnimation.transition) {
                 currentStep -= 1
             }
@@ -30,6 +33,7 @@ class OnboardingStore {
 
     func complete() {
         saveResponses()
+        HBHaptic.success()
         withAnimation(HBAnimation.transition) {
             isComplete = true
         }

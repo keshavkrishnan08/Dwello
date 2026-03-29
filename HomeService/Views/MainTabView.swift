@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selectedTab: Tab = .home
-    @State private var tabAnimation: Bool = false
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     enum Tab: String, CaseIterable {
         case home = "Home"
@@ -23,26 +23,42 @@ struct MainTabView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            TabView(selection: $selectedTab) {
-                HomeTabView()
-                    .tag(Tab.home)
-
-                LogTabView()
-                    .tag(Tab.log)
-
-                TimelineTabView()
-                    .tag(Tab.timeline)
-
-                StatsTabView()
-                    .tag(Tab.stats)
-
-                ProfileTabView()
-                    .tag(Tab.profile)
+        Group {
+            if sizeClass == .regular {
+                // iPad: use sidebar navigation
+                NavigationSplitView {
+                    List(Tab.allCases, id: \.self, selection: $selectedTab) { tab in
+                        Label(tab.rawValue, systemImage: tab.icon)
+                    }
+                    .navigationTitle("Dwello")
+                    .listStyle(.sidebar)
+                } detail: {
+                    tabContent
+                }
+            } else {
+                // iPhone: custom tab bar
+                ZStack(alignment: .bottom) {
+                    TabView(selection: $selectedTab) {
+                        HomeTabView().tag(Tab.home)
+                        LogTabView().tag(Tab.log)
+                        TimelineTabView().tag(Tab.timeline)
+                        StatsTabView().tag(Tab.stats)
+                        ProfileTabView().tag(Tab.profile)
+                    }
+                    CustomTabBar(selectedTab: $selectedTab)
+                }
             }
+        }
+    }
 
-            // Custom tab bar
-            CustomTabBar(selectedTab: $selectedTab)
+    @ViewBuilder
+    private var tabContent: some View {
+        switch selectedTab {
+        case .home: HomeTabView()
+        case .log: LogTabView()
+        case .timeline: TimelineTabView()
+        case .stats: StatsTabView()
+        case .profile: ProfileTabView()
         }
     }
 }
@@ -54,15 +70,13 @@ struct CustomTabBar: View {
         HStack {
             ForEach(MainTabView.Tab.allCases, id: \.self) { tab in
                 Button(action: {
-                    let generator = UIImpactFeedbackGenerator(style: .light)
-                    generator.impactOccurred()
+                    HBHaptic.light()
                     withAnimation(HBAnimation.springInteractive) {
                         selectedTab = tab
                     }
                 }) {
                     VStack(spacing: 4) {
                         if tab == .log {
-                            // Special center button
                             ZStack {
                                 Circle()
                                     .fill(Color.hbPrimary)
