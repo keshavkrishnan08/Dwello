@@ -781,9 +781,9 @@ private struct PaywallStep: View {
                         HStack(spacing: HBSpacing.md) {
                             Button("Restore") { Task { await subManager.restore(); if subManager.isPremium { store.complete() } } }
                                 .font(.system(size: 12, weight: .medium)).foregroundColor(.hbTextSecondary)
-                            Link("Terms", destination: URL(string: "https://keshavkrishnan08.github.io/Dwello/#terms")!)
+                            Link("Terms", destination: URL(string: "https://keshavkrishnan08.github.io/Dwillo/#terms")!)
                                 .font(.system(size: 12, weight: .medium)).foregroundColor(.hbTextSecondary)
-                            Link("Privacy", destination: URL(string: "https://keshavkrishnan08.github.io/Dwello/#privacy")!)
+                            Link("Privacy", destination: URL(string: "https://keshavkrishnan08.github.io/Dwillo/#privacy")!)
                                 .font(.system(size: 12, weight: .medium)).foregroundColor(.hbTextSecondary)
                         }
                     }.padding(.top, HBSpacing.xs)

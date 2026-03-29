@@ -33,7 +33,7 @@ struct MainTabView: View {
                                 .tag(tab)
                         }
                     }
-                    .navigationTitle("Dwello")
+                    .navigationTitle("Dwillo")
                     .listStyle(.sidebar)
                 } detail: {
                     tabContent
