@@ -5,7 +5,7 @@ import SwiftUI
 class CloudKitManager {
     static let shared = CloudKitManager()
 
-    let container = CKContainer(identifier: "iCloud.dds.HomeService")
+    let container = CKContainer(identifier: "iCloud.com.dwillo.com")
     var iCloudAvailable = false
     var syncStatus: SyncStatus = .idle
     private var syncTask: Task<Void, Never>?
