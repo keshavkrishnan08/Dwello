@@ -124,10 +124,15 @@ class AppStore {
     }
 
     var projectedAnnualSpend: Double {
-        // Extrapolate from last 3 months of data
-        let threeMonthsAgo = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
-        let recentSpend = logs.filter { $0.date > threeMonthsAgo }.compactMap(\.cost).reduce(0, +)
-        return recentSpend * 4 // 3 months × 4 = 12 months
+        guard !logs.isEmpty else { return 0 }
+
+        // Find the span of data we have
+        guard let earliest = logs.map(\.date).min() else { return 0 }
+        let daysCovered = max(1, Calendar.current.dateComponents([.day], from: earliest, to: Date()).day ?? 1)
+
+        // Total spend over that period, extrapolated to 365 days
+        let totalInPeriod = logs.compactMap(\.cost).reduce(0, +)
+        return totalInPeriod * (365.0 / Double(daysCovered))
     }
 
     var avgCostPerEntry: Double {
@@ -151,10 +156,24 @@ class AppStore {
     }
 
     var estimatedSavingsFromPrevention: Double {
-        // Industry data: preventive maintenance saves ~$0.50 per $1 spent
-        // Emergency repairs cost 3-5× more than scheduled ones
-        let preventiveCount = logs.filter { $0.priority == .routine }.count
-        return Double(preventiveCount) * 75 // ~$75 saved per preventive task
+        guard !logs.isEmpty else { return 0 }
+
+        // Calculate based on actual data:
+        // 1. Routine maintenance costs X → if deferred, emergency repair costs 3-5× more
+        // 2. Each on-time task saved you the emergency markup
+        let routineLogs = logs.filter { $0.priority == .routine }
+        let routineSpend = routineLogs.compactMap(\.cost).reduce(0, +)
+
+        // Emergency repairs you avoided by doing preventive work
+        // Industry avg: deferred maintenance costs 3× the preventive cost
+        let avoidedEmergencyCost = routineSpend * 2.0 // You'd have paid 3× total, saved 2×
+
+        // Zero-cost routine tasks (testing smoke detectors, cleaning, etc.)
+        // still prevent costly failures — avg $150 emergency call avoided per free task
+        let freeTasks = routineLogs.filter { ($0.cost ?? 0) == 0 }.count
+        let freeTaskSavings = Double(freeTasks) * 150
+
+        return avoidedEmergencyCost + freeTaskSavings
     }
 
     // MARK: - ML Health Score
