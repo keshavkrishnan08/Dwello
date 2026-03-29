@@ -2,7 +2,6 @@ import SwiftUI
 
 struct MainTabView: View {
     @State private var selectedTab: Tab = .home
-    @Environment(\.horizontalSizeClass) private var sizeClass
 
     enum Tab: String, CaseIterable {
         case home = "Home"
@@ -23,45 +22,15 @@ struct MainTabView: View {
     }
 
     var body: some View {
-        Group {
-            if sizeClass == .regular {
-                // iPad: use sidebar navigation
-                NavigationSplitView {
-                    List(selection: $selectedTab) {
-                        ForEach(Tab.allCases, id: \.self) { tab in
-                            Label(tab.rawValue, systemImage: tab.icon)
-                                .tag(tab)
-                        }
-                    }
-                    .navigationTitle("Dwillo")
-                    .listStyle(.sidebar)
-                } detail: {
-                    tabContent
-                }
-            } else {
-                // iPhone: custom tab bar
-                ZStack(alignment: .bottom) {
-                    TabView(selection: $selectedTab) {
-                        HomeTabView().tag(Tab.home)
-                        LogTabView().tag(Tab.log)
-                        TimelineTabView().tag(Tab.timeline)
-                        StatsTabView().tag(Tab.stats)
-                        ProfileTabView().tag(Tab.profile)
-                    }
-                    CustomTabBar(selectedTab: $selectedTab)
-                }
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selectedTab) {
+                HomeTabView().tag(Tab.home)
+                LogTabView().tag(Tab.log)
+                TimelineTabView().tag(Tab.timeline)
+                StatsTabView().tag(Tab.stats)
+                ProfileTabView().tag(Tab.profile)
             }
-        }
-    }
-
-    @ViewBuilder
-    private var tabContent: some View {
-        switch selectedTab {
-        case .home: HomeTabView()
-        case .log: LogTabView()
-        case .timeline: TimelineTabView()
-        case .stats: StatsTabView()
-        case .profile: ProfileTabView()
+            CustomTabBar(selectedTab: $selectedTab)
         }
     }
 }
