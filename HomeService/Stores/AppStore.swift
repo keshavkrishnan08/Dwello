@@ -113,6 +113,13 @@ class AppStore {
     var categoryBreakdown: [(HomeCategory, Double)] {
         let grouped = Dictionary(grouping: logs, by: \.category)
         return grouped.map { ($0.key, $0.value.compactMap(\.cost).reduce(0, +)) }
+            .filter { $0.1 > 0 }
+            .sorted { $0.1 > $1.1 }
+    }
+
+    var categoryLogCounts: [(HomeCategory, Int)] {
+        let grouped = Dictionary(grouping: logs, by: \.category)
+        return grouped.map { ($0.key, $0.value.count) }
             .sorted { $0.1 > $1.1 }
     }
 
@@ -126,11 +133,13 @@ class AppStore {
     var projectedAnnualSpend: Double {
         guard !logs.isEmpty else { return 0 }
 
-        // Find the span of data we have
         guard let earliest = logs.map(\.date).min() else { return 0 }
         let daysCovered = max(1, Calendar.current.dateComponents([.day], from: earliest, to: Date()).day ?? 1)
 
-        // Total spend over that period, extrapolated to 365 days
+        // Need at least 14 days of data for projection to be meaningful
+        // Otherwise just show actual total
+        guard daysCovered >= 14 else { return totalSpend }
+
         let totalInPeriod = logs.compactMap(\.cost).reduce(0, +)
         return totalInPeriod * (365.0 / Double(daysCovered))
     }
