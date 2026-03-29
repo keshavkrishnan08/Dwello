@@ -72,7 +72,7 @@ struct TimelineTabView: View {
 
                     // Weekday headers
                     HStack(spacing: 0) {
-                        ForEach(["S", "M", "T", "W", "T", "F", "S"], id: \.self) { day in
+                        ForEach(Array(["S","M","T","W","T","F","S"].enumerated()), id: \.offset) { _, day in
                             Text(day)
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.hbTextSecondary)
@@ -86,7 +86,7 @@ struct TimelineTabView: View {
                     // Calendar grid
                     let days = daysInMonth()
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 4) {
-                        ForEach(days, id: \.self) { day in
+                        ForEach(Array(days.enumerated()), id: \.offset) { _, day in
                             if let day = day {
                                 let isToday = calendar.isDateInToday(day)
                                 let isSelected = calendar.isDate(day, inSameDayAs: selectedDate)
