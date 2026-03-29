@@ -51,6 +51,16 @@ struct HomeServiceApp: App {
                 // Load StoreKit products and check entitlements
                 await subscriptionManager.loadProducts()
                 await subscriptionManager.updatePurchasedProducts()
+
+                // Notifications
+                NotificationManager.shared.registerCategories()
+                _ = await NotificationManager.shared.requestPermission()
+                NotificationManager.shared.scheduleWeeklySummary(
+                    overdueCount: appStore.overdueReminders.count,
+                    upcomingCount: appStore.upcomingReminders.count,
+                    healthScore: appStore.homeHealthScore
+                )
+                NotificationManager.shared.scheduleSeasonalNudge()
             }
         }
     }

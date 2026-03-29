@@ -337,6 +337,9 @@ class AppStore {
 
     func addReminder(_ reminder: Reminder) {
         reminders.append(reminder)
+        // Schedule notifications
+        NotificationManager.shared.scheduleReminder(reminder)
+        NotificationManager.shared.scheduleDayBeforeWarning(reminder)
     }
 
     /// Restore all data from CloudKit (e.g., new device, reinstall)

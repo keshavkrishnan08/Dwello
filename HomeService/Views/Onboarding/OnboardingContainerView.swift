@@ -710,11 +710,21 @@ private struct PaywallStep: View {
                     }
                     .opacity(appeared ? 1 : 0).offset(y: appeared ? 0 : 15)
 
-                    VStack(alignment: .leading, spacing: HBSpacing.md) {
-                        featureRow("AI-powered maintenance predictions")
-                        featureRow("Unlimited logging & full history")
-                        featureRow("Smart contractor comparisons")
-                        featureRow("Home value tracking & reports")
+                    VStack(alignment: .leading, spacing: HBSpacing.sm + 2) {
+                        Text("WHAT YOU GET")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(.hbTextSecondary)
+                            .tracking(1)
+                        featureRow("Unlimited maintenance logs (no monthly cap)")
+                        featureRow("Smart scheduling — auto-reminders for every task")
+                        featureRow("Full maintenance history & cost analytics")
+                        featureRow("Home Health Score with detailed breakdown")
+                        featureRow("AI-powered predictions & savings insights")
+                        featureRow("Contractor address book with ratings")
+                        featureRow("Appliance registry with warranty tracking")
+                        featureRow("PDF home reports for sale or insurance")
+                        featureRow("iCloud sync across all your devices")
+                        featureRow("Priority email support")
                     }
                     .padding(.horizontal, HBSpacing.xl)
                     .opacity(appeared ? 1 : 0).animation(.easeOut(duration: 0.4).delay(0.3), value: appeared)
