@@ -6,8 +6,8 @@ class SubscriptionManager {
     static let shared = SubscriptionManager()
 
     // Product IDs — must match App Store Connect and Configuration.storekit
-    static let yearlyID = "com.dwello.premium.yearly"
-    static let monthlyID = "com.dwello.premium.monthly"
+    static let yearlyID = "com.dwillo.premium.yearly"
+    static let monthlyID = "com.dwillo.premium.monthly"
     static let allProductIDs: Set<String> = [yearlyID, monthlyID]
 
     // State

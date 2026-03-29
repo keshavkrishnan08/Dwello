@@ -185,7 +185,7 @@ class NotificationManager {
             return "Score: \(score)/100. All caught up — great job staying on top of things!"
         }
         if overdue > 0 {
-            return "Score: \(score)/100. You have \(overdue) overdue task\(overdue == 1 ? "" : "s") and \(upcoming) upcoming. Open Dwello to catch up."
+            return "Score: \(score)/100. You have \(overdue) overdue task\(overdue == 1 ? "" : "s") and \(upcoming) upcoming. Open Dwillo to catch up."
         }
         return "Score: \(score)/100. \(upcoming) task\(upcoming == 1 ? "" : "s") coming up this week. Stay ahead!"
     }
