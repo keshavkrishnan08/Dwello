@@ -27,8 +27,11 @@ struct MainTabView: View {
             if sizeClass == .regular {
                 // iPad: use sidebar navigation
                 NavigationSplitView {
-                    List(Tab.allCases, id: \.self, selection: $selectedTab) { tab in
-                        Label(tab.rawValue, systemImage: tab.icon)
+                    List(selection: $selectedTab) {
+                        ForEach(Tab.allCases, id: \.self) { tab in
+                            Label(tab.rawValue, systemImage: tab.icon)
+                                .tag(tab)
+                        }
                     }
                     .navigationTitle("Dwello")
                     .listStyle(.sidebar)
