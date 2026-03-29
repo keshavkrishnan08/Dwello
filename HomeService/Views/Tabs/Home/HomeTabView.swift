@@ -128,40 +128,42 @@ struct HomeTabView: View {
                         .opacity(appeared ? 1 : 0)
                         .animation(.easeOut(duration: 0.4).delay(0.1), value: appeared)
 
-                        // Financial overview — real numbers
-                        VStack(spacing: HBSpacing.sm) {
-                            HStack(spacing: HBSpacing.sm) {
-                                FinStat(
-                                    value: "$\(Int(appStore.monthlySpend))",
-                                    label: "This Month",
-                                    icon: "calendar",
-                                    color: .hbPrimary
-                                )
-                                FinStat(
-                                    value: "$\(Int(appStore.totalSpend))",
-                                    label: "All Time",
-                                    icon: "dollarsign.circle",
-                                    color: .hbLavender
-                                )
+                        // Financial overview — all from real data
+                        if !appStore.logs.isEmpty {
+                            VStack(spacing: HBSpacing.sm) {
+                                HStack(spacing: HBSpacing.sm) {
+                                    FinStat(
+                                        value: "$\(Int(appStore.monthlySpend))",
+                                        label: "This Month",
+                                        icon: "calendar",
+                                        color: .hbPrimary
+                                    )
+                                    FinStat(
+                                        value: "$\(Int(appStore.totalSpend))",
+                                        label: "All Time",
+                                        icon: "dollarsign.circle",
+                                        color: .hbLavender
+                                    )
+                                }
+                                HStack(spacing: HBSpacing.sm) {
+                                    FinStat(
+                                        value: "$\(Int(appStore.projectedAnnualSpend))",
+                                        label: "Projected/yr",
+                                        icon: "chart.line.uptrend.xyaxis",
+                                        color: .hbAmber
+                                    )
+                                    FinStat(
+                                        value: "$\(Int(appStore.estimatedSavingsFromPrevention))",
+                                        label: "Est. Saved",
+                                        icon: "leaf.fill",
+                                        color: .hbSuccess
+                                    )
+                                }
                             }
-                            HStack(spacing: HBSpacing.sm) {
-                                FinStat(
-                                    value: "$\(Int(appStore.projectedAnnualSpend))",
-                                    label: "Projected/yr",
-                                    icon: "chart.line.uptrend.xyaxis",
-                                    color: .hbAmber
-                                )
-                                FinStat(
-                                    value: "$\(Int(appStore.estimatedSavingsFromPrevention))",
-                                    label: "Est. Saved",
-                                    icon: "leaf.fill",
-                                    color: .hbSuccess
-                                )
-                            }
+                            .padding(.horizontal, HBSpacing.lg)
+                            .opacity(appeared ? 1 : 0)
+                            .animation(.easeOut(duration: 0.4).delay(0.15), value: appeared)
                         }
-                        .padding(.horizontal, HBSpacing.lg)
-                        .opacity(appeared ? 1 : 0)
-                        .animation(.easeOut(duration: 0.4).delay(0.15), value: appeared)
 
                         // Quick log — example + add custom
                         VStack(alignment: .leading, spacing: HBSpacing.sm) {
