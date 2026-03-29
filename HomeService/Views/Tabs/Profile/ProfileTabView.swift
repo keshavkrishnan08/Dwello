@@ -133,7 +133,7 @@ struct ProfileTabView: View {
 
                         // App info
                         VStack(spacing: HBSpacing.xs) {
-                            Text("HomeBase v1.0")
+                            Text("Dwillo v1.0")
                                 .font(HBTypography.caption)
                                 .foregroundColor(.hbTextSecondary)
                             Text("Made with care for homeowners")
@@ -188,7 +188,7 @@ struct SubscriptionView: View {
             EmptyStateView(
                 icon: "creditcard.fill",
                 title: "Manage Subscription",
-                subtitle: "View and manage your HomeBase plan"
+                subtitle: "View and manage your Dwillo plan"
             )
         }
         .navigationTitle("Subscription")
