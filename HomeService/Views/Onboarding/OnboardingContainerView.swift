@@ -24,21 +24,28 @@ struct OnboardingContainerView: View {
                     HBProgressBar(currentStep: store.currentStep, totalSteps: store.totalSteps)
                         .padding(.bottom, HBSpacing.sm)
                 }
-                Group {
-                    switch store.currentStep {
-                    case 1:  WelcomeStep(store: store)
-                    case 2:  OnboardingHomeTypeView(store: store)
-                    case 3:  HomeAgeStep(store: store)
-                    case 4:  FrequencyStep(store: store)
-                    case 5:  SystemsStep(store: store)
-                    case 6:  GoalsStep(store: store)
-                    case 7:  OnboardingChallengeView(store: store)
-                    case 8:  ExistingSystemsStep(store: store)
-                    case 9:  NotificationStep(store: store)
-                    case 10: PersonalizedStep(store: store)
-                    case 11: LoadingPlanStep(store: store)
-                    case 12: PaywallStep(store: store)
-                    default: EmptyView()
+                GeometryReader { geo in
+                    ScrollView(showsIndicators: false) {
+                        Group {
+                            switch store.currentStep {
+                            case 1:  WelcomeStep(store: store)
+                            case 2:  OnboardingHomeTypeView(store: store)
+                            case 3:  HomeAgeStep(store: store)
+                            case 4:  FrequencyStep(store: store)
+                            case 5:  SystemsStep(store: store)
+                            case 6:  GoalsStep(store: store)
+                            case 7:  OnboardingChallengeView(store: store)
+                            case 8:  ExistingSystemsStep(store: store)
+                            case 9:  NotificationStep(store: store)
+                            case 10: PersonalizedStep(store: store)
+                            case 11: LoadingPlanStep(store: store)
+                            case 12: PaywallStep(store: store)
+                            default: EmptyView()
+                            }
+                        }
+                        .frame(minHeight: geo.size.height)
+                        .frame(maxWidth: 500)
+                        .frame(maxWidth: .infinity)
                     }
                 }
                 .transition(.asymmetric(
@@ -59,66 +66,72 @@ private struct WelcomeStep: View {
     @State private var orbitAngle: Double = 0
 
     var body: some View {
-        VStack(spacing: HBSpacing.lg) {
-            Spacer()
-            ZStack {
-                ForEach(0..<3, id: \.self) { i in
-                    Circle()
-                        .stroke(Color.hbPrimary.opacity(0.05 - Double(i) * 0.012), lineWidth: 1.5)
-                        .frame(width: 140 + CGFloat(i) * 55)
-                        .scaleEffect(appeared ? 1 : 0.3)
-                        .animation(.easeOut(duration: 0.9).delay(Double(i) * 0.1), value: appeared)
-                }
-                ForEach(0..<4, id: \.self) { i in
-                    let icons = ["wrench.fill", "hammer.fill", "paintbrush.fill", "leaf.fill"]
-                    let angle = orbitAngle + Double(i) * 90
-                    ZStack {
-                        Circle().fill(i % 2 == 0 ? Color.hbPrimary.opacity(0.08) : Color.hbLavender.opacity(0.08))
-                            .frame(width: 32)
-                        Image(systemName: icons[i]).font(.system(size: 13))
-                            .foregroundColor(i % 2 == 0 ? .hbPrimary : .hbLavender)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: HBSpacing.lg) {
+                Spacer().frame(height: HBSpacing.xl)
+                ZStack {
+                    ForEach(0..<3, id: \.self) { i in
+                        Circle()
+                            .stroke(Color.hbPrimary.opacity(0.05 - Double(i) * 0.012), lineWidth: 1.5)
+                            .frame(width: 140 + CGFloat(i) * 55)
+                            .scaleEffect(appeared ? 1 : 0.3)
+                            .animation(.easeOut(duration: 0.9).delay(Double(i) * 0.1), value: appeared)
                     }
-                    .offset(x: cos(angle * .pi / 180) * 100, y: sin(angle * .pi / 180) * 45)
-                    .scaleEffect(appeared ? 1 : 0)
-                    .animation(.spring(response: 0.8, dampingFraction: 0.6).delay(0.35 + Double(i) * 0.08), value: appeared)
-                }
-                Ellipse().fill(Color.hbPrimary.opacity(0.04)).frame(width: 90, height: 16).offset(y: 58)
-                VStack(spacing: 0) {
-                    ZStack {
-                        Triangle().fill(Color.hbPrimaryDark.opacity(0.18)).frame(width: 100, height: 44).offset(x: 3, y: 3)
-                        Triangle().fill(LinearGradient(colors: [.hbPrimary, .hbPrimaryDark], startPoint: .top, endPoint: .bottom))
-                            .frame(width: 100, height: 44)
+                    ForEach(0..<4, id: \.self) { i in
+                        let icons = ["wrench.fill", "hammer.fill", "paintbrush.fill", "leaf.fill"]
+                        let angle = orbitAngle + Double(i) * 90
+                        ZStack {
+                            Circle().fill(i % 2 == 0 ? Color.hbPrimary.opacity(0.08) : Color.hbLavender.opacity(0.08))
+                                .frame(width: 32)
+                            Image(systemName: icons[i]).font(.system(size: 13))
+                                .foregroundColor(i % 2 == 0 ? .hbPrimary : .hbLavender)
+                        }
+                        .offset(x: cos(angle * .pi / 180) * 100, y: sin(angle * .pi / 180) * 45)
+                        .scaleEffect(appeared ? 1 : 0)
+                        .animation(.spring(response: 0.8, dampingFraction: 0.6).delay(0.35 + Double(i) * 0.08), value: appeared)
                     }
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 4)
-                            .fill(LinearGradient(colors: [.white, Color.hbSurfaceWarm], startPoint: .top, endPoint: .bottom))
-                            .frame(width: 82, height: 52)
-                        RoundedRectangle(cornerRadius: 3).fill(Color.hbPrimary).frame(width: 16, height: 28).offset(y: 12)
-                        Circle().fill(Color.hbLavender).frame(width: 3, height: 3).offset(x: 5, y: 12)
-                        HStack(spacing: 12) { WindowPane(); Spacer().frame(width: 16); WindowPane() }.offset(y: -6)
-                    }.offset(y: -2)
+                    Ellipse().fill(Color.hbPrimary.opacity(0.04)).frame(width: 90, height: 16).offset(y: 58)
+                    VStack(spacing: 0) {
+                        ZStack {
+                            Triangle().fill(Color.hbPrimaryDark.opacity(0.18)).frame(width: 100, height: 44).offset(x: 3, y: 3)
+                            Triangle().fill(LinearGradient(colors: [.hbPrimary, .hbPrimaryDark], startPoint: .top, endPoint: .bottom))
+                                .frame(width: 100, height: 44)
+                        }
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(LinearGradient(colors: [.white, Color.hbSurfaceWarm], startPoint: .top, endPoint: .bottom))
+                                .frame(width: 82, height: 52)
+                            RoundedRectangle(cornerRadius: 3).fill(Color.hbPrimary).frame(width: 16, height: 28).offset(y: 12)
+                            Circle().fill(Color.hbLavender).frame(width: 3, height: 3).offset(x: 5, y: 12)
+                            HStack(spacing: 12) { WindowPane(); Spacer().frame(width: 16); WindowPane() }.offset(y: -6)
+                        }.offset(y: -2)
+                    }
+                    .offset(y: houseFloat)
+                    .scaleEffect(appeared ? 1 : 0.3)
+                    .animation(.spring(response: 0.7, dampingFraction: 0.6), value: appeared)
                 }
-                .offset(y: houseFloat)
-                .scaleEffect(appeared ? 1 : 0.3)
-                .animation(.spring(response: 0.7, dampingFraction: 0.6), value: appeared)
-            }
-            .frame(height: 240)
+                .frame(height: 220)
 
-            VStack(spacing: HBSpacing.md) {
-                Text("Welcome to\nDwillo")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .foregroundColor(.hbTextPrimary)
-                    .multilineTextAlignment(.center).lineSpacing(4)
-                Text("Track, manage, and protect\nyour biggest investment.")
-                    .font(HBTypography.body).foregroundColor(.hbTextSecondary).multilineTextAlignment(.center)
+                VStack(spacing: HBSpacing.md) {
+                    Text("Welcome to\nDwillo")
+                        .font(.system(size: 34, weight: .bold, design: .rounded))
+                        .foregroundColor(.hbTextPrimary)
+                        .multilineTextAlignment(.center).lineSpacing(4)
+                    Text("Track, manage, and protect\nyour biggest investment.")
+                        .font(HBTypography.body).foregroundColor(.hbTextSecondary).multilineTextAlignment(.center)
+                }
+                .padding(.horizontal, HBSpacing.lg)
+                .opacity(appeared ? 1 : 0).offset(y: appeared ? 0 : 20)
+                .animation(.easeOut(duration: 0.5).delay(0.25), value: appeared)
+
+                Spacer().frame(height: HBSpacing.xl)
+
+                HBButton(title: "Get Started") { store.nextStep() }
+                    .padding(.horizontal, HBSpacing.lg).padding(.bottom, HBSpacing.xxl)
+                    .opacity(appeared ? 1 : 0).animation(.easeOut(duration: 0.4).delay(0.5), value: appeared)
             }
-            .padding(.horizontal, HBSpacing.lg)
-            .opacity(appeared ? 1 : 0).offset(y: appeared ? 0 : 20)
-            .animation(.easeOut(duration: 0.5).delay(0.25), value: appeared)
-            Spacer()
-            HBButton(title: "Get Started") { store.nextStep() }
-                .padding(.horizontal, HBSpacing.lg).padding(.bottom, HBSpacing.xxl)
-                .opacity(appeared ? 1 : 0).animation(.easeOut(duration: 0.4).delay(0.5), value: appeared)
+            .frame(maxWidth: 500)
+            .frame(maxWidth: .infinity)
         }
         .onAppear {
             withAnimation { appeared = true }
@@ -132,6 +145,7 @@ private struct WelcomeStep: View {
 private struct HomeAgeStep: View {
     let store: OnboardingStore
     @State private var appeared = false
+    @Environment(\.verticalSizeClass) private var vSizeClass
 
     private let ages: [(OnboardingResponses.HomeAge, String, String)] = [
         (.newBuild, "🏗️", "0–5 yrs"),
@@ -780,19 +794,20 @@ private struct PaywallStep: View {
                     .padding(.horizontal, HBSpacing.lg)
                     .opacity(appeared ? 1 : 0).animation(.easeOut(duration: 0.4).delay(0.5), value: appeared)
 
-                    VStack(spacing: HBSpacing.xs) {
-                        if subManager.yearlyProduct?.subscription?.introductoryOffer != nil {
-                            Text("7-day free trial · Cancel anytime")
-                                .font(.system(size: 12, weight: .medium)).foregroundColor(.hbPrimary)
-                        }
-                        Text("Auto-renews. Cancel anytime in Settings.")
-                            .font(.system(size: 12)).foregroundColor(.hbTextSecondary)
+                    VStack(spacing: HBSpacing.sm) {
+                        // Required subscription disclosure
+                        Text("Dwillo Premium auto-renews at \(selectedPlan == .yearly ? "$24.99/year" : "$4.99/month"). Cancel anytime in Settings > Apple ID > Subscriptions at least 24 hours before the end of the current period.")
+                            .font(.system(size: 11))
+                            .foregroundColor(.hbTextSecondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, HBSpacing.md)
+
                         HStack(spacing: HBSpacing.md) {
                             Button("Restore") { Task { await subManager.restore(); if subManager.isPremium { store.complete() } } }
                                 .font(.system(size: 12, weight: .medium)).foregroundColor(.hbTextSecondary)
-                            Link("Terms", destination: URL(string: "https://keshavkrishnan08.github.io/Dwillo/#terms")!)
+                            Link("Terms of Use", destination: URL(string: "https://keshavkrishnan08.github.io/Dwello/#terms")!)
                                 .font(.system(size: 12, weight: .medium)).foregroundColor(.hbTextSecondary)
-                            Link("Privacy", destination: URL(string: "https://keshavkrishnan08.github.io/Dwillo/#privacy")!)
+                            Link("Privacy Policy", destination: URL(string: "https://keshavkrishnan08.github.io/Dwello/#privacy")!)
                                 .font(.system(size: 12, weight: .medium)).foregroundColor(.hbTextSecondary)
                         }
                     }.padding(.top, HBSpacing.xs)
