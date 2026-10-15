@@ -238,9 +238,9 @@ struct OnboardingResponses: Codable {
     var notificationPreference: NotificationPreference?
 
     enum HomeAge: String, CaseIterable, Codable, Identifiable {
-        case newBuild = "New Build (0-5 years)"
-        case established = "Established (5-20 years)"
-        case mature = "Mature (20-50 years)"
+        case newBuild = "New Build (0\u{2013}5 years)"
+        case established = "Established (5\u{2013}20 years)"
+        case mature = "Mature (20\u{2013}50 years)"
         case historic = "Historic (50+ years)"
 
         var id: String { rawValue }
@@ -266,9 +266,9 @@ struct OnboardingResponses: Codable {
     }
 
     enum NotificationPreference: String, CaseIterable, Codable, Identifiable {
-        case morning = "Morning (8-10am)"
-        case afternoon = "Afternoon (12-2pm)"
-        case evening = "Evening (6-8pm)"
+        case morning = "Morning (8\u{2013}10am)"
+        case afternoon = "Afternoon (12\u{2013}2pm)"
+        case evening = "Evening (6\u{2013}8pm)"
         case weekends = "Weekends only"
         case later = "I'll decide later"
 
