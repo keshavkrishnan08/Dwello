@@ -7,7 +7,7 @@ struct MaintenanceScheduler {
     /// Recommended interval in days for common tasks, by keyword matching.
     /// Based on NAHB, HVAC manufacturer, and home inspector guidelines.
     private static let taskIntervals: [(keywords: [String], days: Int, category: HomeCategory?)] = [
-        // HVAC — most time-sensitive
+        // HVAC: most time-sensitive
         (["hvac filter", "ac filter", "air filter", "furnace filter"], 30, .hvac),
         (["ac tune", "hvac tune", "hvac service", "ac service", "furnace service"], 365, .hvac),
         (["thermostat", "replaced thermostat"], 1825, .hvac),     // 5 years

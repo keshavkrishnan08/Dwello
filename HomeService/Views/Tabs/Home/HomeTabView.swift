@@ -96,7 +96,7 @@ struct HomeTabView: View {
                                 Spacer()
                             }
 
-                            // Score breakdown — what's helping/hurting
+                            // Score breakdown: what's helping/hurting
                             let breakdown = appStore.homeHealthBreakdown
                             if !breakdown.isEmpty {
                                 VStack(spacing: 6) {
@@ -128,7 +128,7 @@ struct HomeTabView: View {
                         .opacity(appeared ? 1 : 0)
                         .animation(.easeOut(duration: 0.4).delay(0.1), value: appeared)
 
-                        // Financial overview — all from real data
+                        // Financial overview: all from real data
                         if !appStore.logs.isEmpty {
                             VStack(spacing: HBSpacing.sm) {
                                 HStack(spacing: HBSpacing.sm) {
@@ -165,7 +165,7 @@ struct HomeTabView: View {
                             .animation(.easeOut(duration: 0.4).delay(0.15), value: appeared)
                         }
 
-                        // Quick log — example + add custom
+                        // Quick log: example + add custom
                         VStack(alignment: .leading, spacing: HBSpacing.sm) {
                             HStack {
                                 Text("Quick Log")

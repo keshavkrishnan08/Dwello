@@ -39,7 +39,7 @@ struct HomeHealthScorer {
     ]
 
     /// Compute the health score from raw features.
-    /// Returns 0–100 with breakdown details.
+    /// Returns 0-100 with breakdown details.
     static func score(features: Features) -> (score: Int, breakdown: [ScoreComponent]) {
         var raw: Double = 75.0 // Baseline
         var components: [ScoreComponent] = []

@@ -178,7 +178,7 @@ class AppStore {
         let avoidedEmergencyCost = routineSpend * 2.0 // You'd have paid 3× total, saved 2×
 
         // Zero-cost routine tasks (testing smoke detectors, cleaning, etc.)
-        // still prevent costly failures — avg $150 emergency call avoided per free task
+        // still prevent costly failures: avg $150 emergency call avoided per free task
         let freeTasks = routineLogs.filter { ($0.cost ?? 0) == 0 }.count
         let freeTaskSavings = Double(freeTasks) * 150
 
@@ -265,7 +265,7 @@ class AppStore {
             recurInterval = intervalFromDays(info.days)
         }
 
-        // Don't duplicate — check title + category
+        // Don't duplicate: check title + category
         let alreadyScheduled = reminders.contains {
             $0.title == entry.title && $0.category == entry.category && !$0.isCompleted && $0.dueDate > Date()
         }

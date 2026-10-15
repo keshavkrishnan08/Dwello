@@ -49,7 +49,7 @@ class NotificationManager {
 
         let content = UNMutableNotificationContent()
         content.title = "Tomorrow: \(reminder.title)"
-        content.body = "Heads up — \(reminder.title.lowercased()) is due tomorrow. Got everything you need?"
+        content.body = "Heads up, \(reminder.title.lowercased()) is due tomorrow. Got everything you need?"
         content.sound = .default
         content.categoryIdentifier = "MAINTENANCE_REMINDER"
 
@@ -166,7 +166,7 @@ class NotificationManager {
         let bodies = [
             "Time for: \(reminder.title). Your home will thank you!",
             "\(reminder.title) is due today. Quick task, big impact.",
-            "Don't forget — \(reminder.title). Staying on schedule keeps costs down.",
+            "Don't forget, \(reminder.title). Staying on schedule keeps costs down.",
             "\(reminder.title) is on your list today. Knock it out! 💪",
             "Reminder: \(reminder.title). Preventive care saves money long-term.",
         ]
@@ -182,7 +182,7 @@ class NotificationManager {
 
     private func weeklySummary(overdue: Int, upcoming: Int, score: Int) -> String {
         if overdue == 0 && upcoming == 0 {
-            return "Score: \(score)/100. All caught up — great job staying on top of things!"
+            return "Score: \(score)/100. All caught up, great job staying on top of things!"
         }
         if overdue > 0 {
             return "Score: \(score)/100. You have \(overdue) overdue task\(overdue == 1 ? "" : "s") and \(upcoming) upcoming. Open Dwillo to catch up."

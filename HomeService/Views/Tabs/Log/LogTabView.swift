@@ -355,7 +355,7 @@ struct FollowUpReminderSheet: View {
                                     .textCase(.uppercase)
                                     .tracking(0.5)
                             }
-                            Text("\(recommended.label) — \(recommended.date.formatted(.dateTime.month(.abbreviated).day().year()))")
+                            Text("\(recommended.label), \(recommended.date.formatted(.dateTime.month(.abbreviated).day().year()))")
                                 .font(.system(size: 14, weight: .medium))
                                 .foregroundColor(.hbTextPrimary)
                         }

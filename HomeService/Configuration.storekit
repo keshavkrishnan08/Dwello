@@ -93,7 +93,7 @@
           },
           "localizations" : [
             {
-              "description" : "Full access — billed annually",
+              "description" : "Full access, billed annually",
               "displayName" : "Yearly",
               "locale" : "en_US"
             }
@@ -118,7 +118,7 @@
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Full access — billed monthly",
+              "description" : "Full access, billed monthly",
               "displayName" : "Monthly",
               "locale" : "en_US"
             }

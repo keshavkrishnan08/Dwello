@@ -39,7 +39,7 @@ struct StatsTabView: View {
                             .padding(.horizontal, HBSpacing.lg)
                             .opacity(appeared ? 1 : 0)
 
-                            // Monthly spending bar chart — from real data
+                            // Monthly spending bar chart: from real data
                             if appStore.spendByMonth.contains(where: { $0.1 > 0 }) {
                                 RealSpendingChart(data: appStore.spendByMonth)
                                     .padding(.horizontal, HBSpacing.lg)
@@ -48,7 +48,7 @@ struct StatsTabView: View {
                                     .animation(.easeOut(duration: 0.4).delay(0.15), value: appeared)
                             }
 
-                            // Category pie chart — from real data
+                            // Category pie chart: from real data
                             if !appStore.categoryBreakdown.isEmpty {
                                 RealCategoryChart(data: appStore.categoryBreakdown, logCounts: appStore.categoryLogCounts)
                                     .padding(.horizontal, HBSpacing.lg)
@@ -57,7 +57,7 @@ struct StatsTabView: View {
                                     .animation(.easeOut(duration: 0.4).delay(0.25), value: appeared)
                             }
 
-                            // Risk assessment — from real data
+                            // Risk assessment: from real data
                             let risks = engine.assessCategoryRisks()
                             if !risks.isEmpty {
                                 RiskSection(risks: risks)
@@ -67,7 +67,7 @@ struct StatsTabView: View {
                                     .animation(.easeOut(duration: 0.4).delay(0.35), value: appeared)
                             }
 
-                            // Cost forecast — from real data
+                            // Cost forecast: from real data
                             let forecasts = engine.forecastCosts()
                             if !forecasts.isEmpty {
                                 ForecastChart(forecasts: forecasts)
@@ -77,7 +77,7 @@ struct StatsTabView: View {
                                     .animation(.easeOut(duration: 0.4).delay(0.45), value: appeared)
                             }
 
-                            // Savings insights — from real data
+                            // Savings insights: from real data
                             let insights = engine.generateSavingsInsights()
                             if !insights.isEmpty {
                                 SavingsSection(insights: insights)
@@ -86,7 +86,7 @@ struct StatsTabView: View {
                                     .animation(.easeOut(duration: 0.4).delay(0.55), value: appeared)
                             }
 
-                            // Activity heatmap — from real data
+                            // Activity heatmap: from real data
                             if !appStore.activityHeatmap.isEmpty {
                                 MaintenanceHeatmap(activities: appStore.activityHeatmap)
                                     .padding(.horizontal, HBSpacing.lg)
@@ -95,7 +95,7 @@ struct StatsTabView: View {
                                     .animation(.easeOut(duration: 0.4).delay(0.65), value: appeared)
                             }
 
-                            // Appliance alerts — from real data
+                            // Appliance alerts: from real data
                             let alerts = engine.applianceAlerts()
                             if !alerts.isEmpty {
                                 ApplianceAlertsSection(alerts: alerts)

@@ -48,7 +48,7 @@ struct OnboardingChallengeView: View {
                 }
                 .opacity(appeared ? 1 : 0)
 
-                // Emoji + text rows — lightweight, no heavy card chrome
+                // Emoji + text rows: lightweight, no heavy card chrome
                 VStack(spacing: HBSpacing.sm + 2) {
                     ForEach(Array(challenges.enumerated()), id: \.element.title) { index, c in
                         let isSelected = store.responses.biggestChallenge == c.title

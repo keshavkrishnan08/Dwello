@@ -10,7 +10,7 @@ struct OnboardingHomeTypeView: View {
         VStack(spacing: HBSpacing.xl) {
             Spacer().frame(height: HBSpacing.md)
 
-            // Hero — morphing icon in teal circle
+            // Hero: morphing icon in teal circle
             ZStack {
                 Circle()
                     .fill(Color.hbSurfaceMint)
@@ -52,7 +52,7 @@ struct OnboardingHomeTypeView: View {
                 .opacity(appeared ? 1 : 0)
                 .offset(y: appeared ? 0 : 12)
 
-            // Staggered icon bubbles — 2 columns offset
+            // Staggered icon bubbles: 2 columns offset
             HStack(alignment: .top, spacing: HBSpacing.lg) {
                 VStack(spacing: HBSpacing.md) {
                     typeBubble(types[0], index: 0)

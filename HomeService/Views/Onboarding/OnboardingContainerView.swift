@@ -148,9 +148,9 @@ private struct HomeAgeStep: View {
     @Environment(\.verticalSizeClass) private var vSizeClass
 
     private let ages: [(OnboardingResponses.HomeAge, String, String)] = [
-        (.newBuild, "🏗️", "0–5 yrs"),
-        (.established, "🏠", "5–20 yrs"),
-        (.mature, "🏡", "20–50 yrs"),
+        (.newBuild, "🏗️", "0-5 yrs"),
+        (.established, "🏠", "5-20 yrs"),
+        (.mature, "🏡", "20-50 yrs"),
         (.historic, "🏛️", "50+ yrs"),
     ]
 
@@ -295,7 +295,7 @@ private struct SystemsStep: View {
             Text("Which areas do you\nwant to track?")
                 .font(.system(size: 28, weight: .bold, design: .rounded))
                 .foregroundColor(.hbTextPrimary).multilineTextAlignment(.center).lineSpacing(4).opacity(appeared ? 1 : 0)
-            Text("Tap to toggle — change anytime").font(HBTypography.bodySmall).foregroundColor(.hbTextSecondary)
+            Text("Tap to toggle, change anytime").font(HBTypography.bodySmall).foregroundColor(.hbTextSecondary)
             CircularCategorySelector(selectedCategories: Binding(
                 get: { store.responses.selectedSystems }, set: { store.responses.selectedSystems = $0 }
             )).opacity(appeared ? 1 : 0)
@@ -307,7 +307,7 @@ private struct SystemsStep: View {
     }
 }
 
-// MARK: - 6: Goals — 3-column grid with labels, compact
+// MARK: - 6: Goals: 3-column grid with labels, compact
 private struct GoalsStep: View {
     let store: OnboardingStore
     @State private var appeared = false
@@ -335,7 +335,7 @@ private struct GoalsStep: View {
             Text("Tap as many as you'd like")
                 .font(HBTypography.bodySmall).foregroundColor(.hbTextSecondary)
 
-            // Compact 3-column grid — icons with labels
+            // Compact 3-column grid: icons with labels
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: HBSpacing.md), count: 3), spacing: HBSpacing.md) {
                 ForEach(Array(goals.enumerated()), id: \.element.0) { index, goal in
                     let isSelected = store.responses.goals.contains(goal.0)
@@ -394,7 +394,7 @@ private struct GoalsStep: View {
     }
 }
 
-// MARK: - 8: Existing Systems — Toggles
+// MARK: - 8: Existing Systems: Toggles
 private struct ExistingSystemsStep: View {
     let store: OnboardingStore
     @State private var appeared = false
@@ -529,7 +529,7 @@ private struct NotificationStep: View {
     }
 }
 
-// MARK: - 10: Personalized — Checklist
+// MARK: - 10: Personalized: Checklist
 private struct PersonalizedStep: View {
     let store: OnboardingStore
     @State private var appeared = false
@@ -586,7 +586,7 @@ private struct PersonalizedStep: View {
     }
 }
 
-// MARK: - 11: Loading Plan — Auto-advances to paywall
+// MARK: - 11: Loading Plan: Auto-advances to paywall
 private struct LoadingPlanStep: View {
     let store: OnboardingStore
     @State private var progress: CGFloat = 0
@@ -660,7 +660,7 @@ private struct LoadingPlanStep: View {
     }
 }
 
-// MARK: - 12: Paywall — StoreKit integrated
+// MARK: - 12: Paywall: StoreKit integrated
 private struct PaywallStep: View {
     let store: OnboardingStore
     @Environment(SubscriptionManager.self) private var subManager
@@ -678,9 +678,9 @@ private struct PaywallStep: View {
 
     private var ctaTitle: String {
         if let product = selectedPlan == .yearly ? subManager.yearlyProduct : subManager.monthlyProduct {
-            return "Continue — \(product.displayPrice)/\(selectedPlan == .yearly ? "yr" : "mo")"
+            return "Continue, \(product.displayPrice)/\(selectedPlan == .yearly ? "yr" : "mo")"
         }
-        return selectedPlan == .yearly ? "Continue — $24.99/yr" : "Continue — $4.99/mo"
+        return selectedPlan == .yearly ? "Continue, $24.99/yr" : "Continue, $4.99/mo"
     }
 
     private var yearlyPrice: String {
@@ -719,7 +719,7 @@ private struct PaywallStep: View {
                         Text("Unlock your full\nhome potential")
                             .font(.system(size: 26, weight: .bold, design: .rounded))
                             .foregroundColor(.hbTextPrimary).multilineTextAlignment(.center).lineSpacing(4)
-                        Text("Home score: 78/100 — see what's driving it")
+                        Text("Home score: 78/100, see what's driving it")
                             .font(.system(size: 14, weight: .medium)).foregroundColor(.hbPrimary)
                     }
                     .opacity(appeared ? 1 : 0).offset(y: appeared ? 0 : 15)
@@ -737,7 +737,7 @@ private struct PaywallStep: View {
                     .padding(.horizontal, HBSpacing.xl)
                     .opacity(appeared ? 1 : 0).animation(.easeOut(duration: 0.4).delay(0.3), value: appeared)
 
-                    // Review carousel — horizontal scroll
+                    // Review carousel: horizontal scroll
                     VStack(spacing: HBSpacing.xs) {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: HBSpacing.md) {
@@ -755,7 +755,7 @@ private struct PaywallStep: View {
                                             .foregroundColor(.hbTextPrimary)
                                             .multilineTextAlignment(.center)
                                             .lineLimit(3)
-                                        Text("— \(review.0)")
+                                        Text("\(review.0)")
                                             .font(.system(size: 11))
                                             .foregroundColor(.hbTextSecondary)
                                     }

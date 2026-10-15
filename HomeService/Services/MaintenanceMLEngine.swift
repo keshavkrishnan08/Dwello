@@ -6,7 +6,7 @@ struct SavingsInsight: Identifiable {
     let description: String
     let estimatedSavings: Double
     let category: HomeCategory
-    let confidence: Double // 0–1
+    let confidence: Double // 0-1
     let actionType: ActionType
 
     enum ActionType: String {
@@ -29,7 +29,7 @@ struct CostForecast: Identifiable {
 struct CategoryRisk: Identifiable {
     let id = UUID()
     let category: HomeCategory
-    let riskScore: Double // 0–100
+    let riskScore: Double // 0-100
     let reason: String
     let daysUntilLikely: Int?
 }
@@ -185,9 +185,9 @@ class MaintenanceMLEngine {
             if avgCost > 200 { risk = min(100, risk * 1.2) }
 
             let reason: String
-            if daysSince > 180 { reason = "Last serviced \(daysSince) days ago — overdue" }
-            else if daysSince > 90 { reason = "Due for routine check — \(daysSince) days since last" }
-            else { reason = "Recently maintained — good shape" }
+            if daysSince > 180 { reason = "Last serviced \(daysSince) days ago, overdue" }
+            else if daysSince > 90 { reason = "Due for routine check, \(daysSince) days since last" }
+            else { reason = "Recently maintained, good shape" }
 
             risks.append(CategoryRisk(
                 category: category,

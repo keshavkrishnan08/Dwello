@@ -96,7 +96,7 @@ struct SeasonalTipsBanner: View {
         switch currentSeason {
         case "Spring": return "Time to inspect your roof and clean out gutters after winter"
         case "Summer": return "Check your AC filters and inspect outdoor areas"
-        case "Fall": return "Prepare your home for winter — check insulation and heating"
+        case "Fall": return "Prepare your home for winter, check insulation and heating"
         default: return "Protect pipes from freezing and check your heating system"
         }
     }
